@@ -2,10 +2,10 @@
 <feature
       id="org.eclipse.emf.emfstore.migration.edapt.feature"
       label="EMFStore Edapt Migration"
-      version="1.9.0.qualifier"
+      version="1.10.0.qualifier"
       provider-name="Eclipse Modeling Project"
       license-feature="org.eclipse.emf.emfstore.license.feature"
-      license-feature-version="1.9.0.qualifier">
+      license-feature-version="1.10.0.qualifier">
 
    <description url="http://emfstore.org">
       This feature contains all plugins to migrate EMFStore-hosted
@@ -222,12 +222,12 @@ litigation.
    </license>
 
    <requires>
-      <import plugin="org.eclipse.emf.emfstore.migration" version="1.9.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.emfstore.migration" version="1.10.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.runtime" version="3.5.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.emf.common" version="2.5.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.emf.edapt.migration" version="1.2.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.emf.edapt.history" version="1.2.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.emf.emfstore.common.model" version="1.9.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.emfstore.common.model" version="1.10.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin

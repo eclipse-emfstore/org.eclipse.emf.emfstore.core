@@ -24,6 +24,7 @@ public class Messages extends NLS {
 	public static String CreateGroupAction_GroupName_Field;
 	public static String CreateGroupAction_OrgUnitName;
 	public static String CreateUserAction_ActionTitle;
+	public static String CreateUserAction_InvalidPasswordTitle;
 	public static String CreateUserAction_OrgUnitName;
 	public static String CreateUserAction_Password_Empty;
 	public static String CreateUserAction_Password_Field;

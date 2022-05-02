@@ -35,6 +35,8 @@ public class Messages extends NLS {
 	public static String FileTransferCacheManager_MoveToCacheFailed_MoveFailed;
 	public static String FileTransferJob_Transferring;
 	public static String FileTransferJob_UnknownSession;
+	public static String FileTransferManager_DeleteFile;
+	public static String FileTransferManager_DeleteFileError;
 	public static String FileTransferManager_ExceptionDuringCaching;
 	public static String FileTransferManager_ExceptionDuringUpload;
 	public static String FileTransferManager_FileDoesNotExist;

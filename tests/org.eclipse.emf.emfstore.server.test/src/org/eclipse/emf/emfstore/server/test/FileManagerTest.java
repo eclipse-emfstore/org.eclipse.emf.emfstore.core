@@ -12,6 +12,7 @@
 package org.eclipse.emf.emfstore.server.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -19,12 +20,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.emf.emfstore.client.ESServer;
-import org.eclipse.emf.emfstore.client.ESUsersession;
 import org.eclipse.emf.emfstore.client.exceptions.ESServerStartFailedException;
 import org.eclipse.emf.emfstore.client.test.common.dsl.Add;
 import org.eclipse.emf.emfstore.client.test.common.dsl.Create;
@@ -51,16 +52,14 @@ import org.junit.Test;
  */
 public class FileManagerTest extends TransmissionTests {
 
-	private File file;
-
 	private static ESServer server;
-	private static ESUsersession session;
+	private File file;
 
 	@BeforeClass
 	public static void beforeClass() {
 		try {
 			server = ServerUtil.startMockServer().getServer();
-			session = server.login(
+			server.login(
 				ServerUtil.superUser(),
 				ServerUtil.superUserPassword());
 		} catch (final IllegalArgumentException ex) {
@@ -267,5 +266,48 @@ public class FileManagerTest extends TransmissionTests {
 		}
 		assertEquals("myId", transferredFile.getName()); //$NON-NLS-1$
 		assertEquals("myFolder", transferredFile.getParentFile().getName()); //$NON-NLS-1$
+	}
+
+	@Test
+	public void testDelete() throws IOException, FileTransferException, InterruptedException {
+		/* setup */
+		file = File.createTempFile("foo", "tmp"); //$NON-NLS-1$//$NON-NLS-2$
+		file.deleteOnExit();
+		FileUtils.writeStringToFile(file, System.currentTimeMillis() + "FOObar"); //$NON-NLS-1$
+
+		final FileTransferManager transferManager1 = new FileTransferManager(
+			getProjectSpace1().getProjectId()/* id */,
+			getProjectSpace1().getUsersession()/* usersession */);
+		transferManager1.addFile(file, "myId"); //$NON-NLS-1$
+		transferManager1.uploadQueuedFiles(new NullProgressMonitor());
+
+		/* assert */
+		final FileTransferManager transferManager2 = new FileTransferManager(
+			getProjectSpace2().getProjectId()/* id */,
+			getProjectSpace2().getUsersession()/* usersession */);
+		final FileIdentifier fileIdentifier = ModelFactory.eINSTANCE.createFileIdentifier();
+		fileIdentifier.setIdentifier("myId"); //$NON-NLS-1$
+		final FileDownloadStatus status = transferManager2.getFile(fileIdentifier, false);
+		assertTrue(status != null);
+		// wait for file to be completely transferred
+		while (status.getStatus() != Status.FINISHED) {
+			if (status.getStatus() == Status.FAILED) {
+				fail("download failed"); //$NON-NLS-1$
+			}
+			Thread.sleep(100);
+		}
+
+		// act
+		transferManager2.deleteFile(new NullProgressMonitor(), fileIdentifier);
+		final FileDownloadStatus status2 = transferManager2.getFile(fileIdentifier, false);
+
+		while (status2.getStatus() == Status.NOT_STARTED) {
+			TimeUnit.MILLISECONDS.sleep(100);
+		}
+
+		// assert
+		// status must be cancelled as the file does not exist
+		assertEquals(status2.getStatus(), Status.CANCELLED);
+		assertFalse(transferManager2.getFileInfo(fileIdentifier).isCached());
 	}
 }

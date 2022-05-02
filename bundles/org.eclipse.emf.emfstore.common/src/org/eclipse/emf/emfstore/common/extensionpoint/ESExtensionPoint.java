@@ -27,7 +27,7 @@ import org.eclipse.emf.emfstore.internal.common.Activator;
  *
  * @author wesendon
  */
-public final class ESExtensionPoint {
+public class ESExtensionPoint {
 
 	private List<ESExtensionElement> elements;
 	private final String id;
@@ -75,11 +75,27 @@ public final class ESExtensionPoint {
 	 * Reloads extensions from the registry.
 	 */
 	public void reload() {
-		elements = new ArrayList<ESExtensionElement>();
+		setElements(new ArrayList<ESExtensionElement>());
 		for (final IConfigurationElement element : Platform.getExtensionRegistry().getConfigurationElementsFor(id)) {
-			elements.add(new ESExtensionElement(element, exceptionInsteadOfNull));
+			getElements().add(new ESExtensionElement(element, exceptionInsteadOfNull));
 		}
-		Collections.sort(elements, comparator);
+		Collections.sort(getElements(), comparator);
+	}
+
+	/**
+	 * @return the extension elements
+	 * @since 1.10
+	 */
+	protected List<ESExtensionElement> getElements() {
+		return elements;
+	}
+
+	/**
+	 * @param elements the elements to set
+	 * @since 1.10
+	 */
+	protected void setElements(List<ESExtensionElement> elements) {
+		this.elements = elements;
 	}
 
 	/**
@@ -225,8 +241,8 @@ public final class ESExtensionPoint {
 	 *         config ( {@link #setThrowException(boolean)}
 	 */
 	public ESExtensionElement getFirst() {
-		if (elements.size() > 0) {
-			return elements.get(0);
+		if (getElements().size() > 0) {
+			return getElements().get(0);
 		}
 		return (ESExtensionElement) handleErrorOrNull(exceptionInsteadOfNull, null,
 			Messages.ESExtensionPoint_ValueNotFound);
@@ -238,7 +254,7 @@ public final class ESExtensionPoint {
 	 * @return list of {@link ESExtensionElement}
 	 */
 	public List<ESExtensionElement> getExtensionElements() {
-		return Collections.unmodifiableList(elements);
+		return Collections.unmodifiableList(getElements());
 	}
 
 	/**
@@ -300,7 +316,7 @@ public final class ESExtensionPoint {
 	 * @return size
 	 */
 	public int size() {
-		return elements.size();
+		return getElements().size();
 	}
 
 	/**

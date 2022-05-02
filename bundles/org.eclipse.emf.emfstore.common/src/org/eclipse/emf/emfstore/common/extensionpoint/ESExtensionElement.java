@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
  *
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
-public final class ESExtensionElement {
+public class ESExtensionElement {
 
 	private final IConfigurationElement element;
 	private boolean exceptionInsteadOfNull;

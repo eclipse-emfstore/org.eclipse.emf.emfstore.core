@@ -23,6 +23,7 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 	AdminEMFStoreTests.class,
+	AdminEMFStoreProjectAdminTests.class,
 	AssignRoleToOrgUnitTests.class,
 	AssignRoleToOrgUnitMissingPrivilegTests.class,
 	AssignOrgUnitToGroupTests.class,

@@ -2,11 +2,11 @@
 <feature
       id="org.eclipse.emf.emfstore.client.ui.historybrowsercomparator.feature"
       label="HistoryBrowserComparator"
-      version="1.9.0.qualifier"
+      version="1.10.0.qualifier"
       provider-name="Eclipse Modeling Project"
       plugin="org.eclipse.emf.emfstore.client.ui.historybrowsercomparator"
       license-feature="org.eclipse.emf.emfstore.license.feature"
-      license-feature-version="1.9.0.qualifier">
+      license-feature-version="1.10.0.qualifier">
 
    <description url="http://emfstore.org">
       This feature adds a comparator to EMFStore&apos;s history browser.
@@ -23,8 +23,8 @@
    <requires>
       <import plugin="org.eclipse.emf.compare" version="3.0.0" match="compatible"/>
       <import plugin="org.eclipse.compare" version="3.5.300" match="compatible"/>
-      <import plugin="org.eclipse.emf.emfstore.client" version="1.9.0" match="compatible"/>
-      <import plugin="org.eclipse.emf.emfstore.client.ui" version="1.9.0" match="compatible"/>
+      <import plugin="org.eclipse.emf.emfstore.client" version="1.10.0" match="compatible"/>
+      <import plugin="org.eclipse.emf.emfstore.client.ui" version="1.10.0" match="compatible"/>
       <import plugin="org.eclipse.emf.compare.ide.ui" version="4.0.0" match="compatible"/>
       <import plugin="org.eclipse.emf.compare.ide" version="3.1.0" match="compatible"/>
       <import plugin="org.eclipse.emf.compare.edit" version="4.0.0" match="compatible"/>

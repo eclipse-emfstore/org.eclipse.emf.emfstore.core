@@ -135,13 +135,23 @@ public interface AccesscontrolPackage extends EPackage {
 	int AC_ORG_UNIT__PROPERTIES = ModelPackage.IDENTIFIABLE_ELEMENT_FEATURE_COUNT + 3;
 
 	/**
+	 * The feature id for the '<em><b>Created By</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 *
+	 * @generated
+	 * @ordered
+	 */
+	int AC_ORG_UNIT__CREATED_BY = ModelPackage.IDENTIFIABLE_ELEMENT_FEATURE_COUNT + 4;
+
+	/**
 	 * The number of structural features of the '<em>AC Org Unit</em>' class.
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
 	 *
 	 * @generated
 	 * @ordered
 	 */
-	int AC_ORG_UNIT_FEATURE_COUNT = ModelPackage.IDENTIFIABLE_ELEMENT_FEATURE_COUNT + 4;
+	int AC_ORG_UNIT_FEATURE_COUNT = ModelPackage.IDENTIFIABLE_ELEMENT_FEATURE_COUNT + 5;
 
 	/**
 	 * The feature id for the '<em><b>Identifier</b></em>' attribute. <!--
@@ -187,6 +197,16 @@ public interface AccesscontrolPackage extends EPackage {
 	 * @ordered
 	 */
 	int AC_USER__PROPERTIES = AC_ORG_UNIT__PROPERTIES;
+
+	/**
+	 * The feature id for the '<em><b>Created By</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 *
+	 * @generated
+	 * @ordered
+	 */
+	int AC_USER__CREATED_BY = AC_ORG_UNIT__CREATED_BY;
 
 	/**
 	 * The feature id for the '<em><b>First Name</b></em>' attribute. <!--
@@ -289,6 +309,16 @@ public interface AccesscontrolPackage extends EPackage {
 	 * @ordered
 	 */
 	int AC_GROUP__PROPERTIES = AC_ORG_UNIT__PROPERTIES;
+
+	/**
+	 * The feature id for the '<em><b>Created By</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 *
+	 * @generated
+	 * @ordered
+	 */
+	int AC_GROUP__CREATED_BY = AC_ORG_UNIT__CREATED_BY;
 
 	/**
 	 * The feature id for the '<em><b>Members</b></em>' reference list. <!--
@@ -511,6 +541,20 @@ public interface AccesscontrolPackage extends EPackage {
 	EReference getACOrgUnit_Properties();
 
 	/**
+	 * Returns the meta object for the attribute
+	 * '{@link org.eclipse.emf.emfstore.internal.server.model.accesscontrol.ACOrgUnit#getCreatedBy <em>Created
+	 * By</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 *
+	 * @return the meta object for the attribute '<em>Created By</em>'.
+	 * @see org.eclipse.emf.emfstore.internal.server.model.accesscontrol.ACOrgUnit#getCreatedBy()
+	 * @see #getACOrgUnit()
+	 * @generated
+	 */
+	EAttribute getACOrgUnit_CreatedBy();
+
+	/**
 	 * Returns the meta object for class '{@link org.eclipse.emf.emfstore.internal.server.model.accesscontrol.ACGroup
 	 * <em>AC Group</em>}'.
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -707,6 +751,15 @@ public interface AccesscontrolPackage extends EPackage {
 		 * @generated
 		 */
 		EReference AC_ORG_UNIT__PROPERTIES = eINSTANCE.getACOrgUnit_Properties();
+
+		/**
+		 * The meta object literal for the '<em><b>Created By</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 *
+		 * @generated
+		 */
+		EAttribute AC_ORG_UNIT__CREATED_BY = eINSTANCE.getACOrgUnit_CreatedBy();
 
 		/**
 		 * The meta object literal for the '

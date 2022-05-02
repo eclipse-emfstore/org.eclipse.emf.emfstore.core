@@ -90,6 +90,11 @@ public abstract class CreateOrgUnitAction extends Action {
 			}
 
 			final Map<String, String> fieldValues = getFieldValues(newUserDialog);
+
+			if (!validateFieldValues(fieldValues)) {
+				return;
+			}
+
 			final String primaryName = fieldValues.get(getPrimaryFieldName());
 
 			if (orgUnitExists(primaryName)) {
@@ -120,6 +125,18 @@ public abstract class CreateOrgUnitAction extends Action {
 			tableViewer.getTable().deselectAll();
 			tableViewer.getTable().select(index);
 		}
+	}
+
+	/**
+	 * Perform additional checks on the field values.
+	 * Returns <code>true</code> by default.
+	 *
+	 * @param fieldValues the field values map
+	 * @return <code>true</code> if all values a fine, <code>false</code> in order to cancel the operation due to
+	 *         invalid values
+	 */
+	protected boolean validateFieldValues(Map<String, String> fieldValues) {
+		return true;
 	}
 
 	/**

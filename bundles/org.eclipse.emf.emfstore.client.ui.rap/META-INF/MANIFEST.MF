@@ -2,12 +2,12 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: EMFStore Client UI for RAP
 Bundle-SymbolicName: org.eclipse.emf.emfstore.client.ui.rap
-Bundle-Version: 1.9.0.qualifier
-Fragment-Host: org.eclipse.emf.emfstore.client.ui;bundle-version="1.9.0"
+Bundle-Version: 1.10.0.qualifier
+Fragment-Host: org.eclipse.emf.emfstore.client.ui;bundle-version="1.10.0"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: org.eclipse.emf.emfstore.internal.client.ui.dialogs.lo
- gin;version="1.9.0";x-internal:=true,org.eclipse.emf.emfstore.interna
- l.client.ui.dialogs.merge.ui;version="1.9.0";x-internal:=true,org.ecl
- ipse.emf.emfstore.internal.client.ui.util;version="1.9.0";x-friends:=
- "org.eclipse.emf.emfstore.client.ui"
+ gin;version="1.10.0";x-internal:=true,org.eclipse.emf.emfstore.intern
+ al.client.ui.dialogs.merge.ui;version="1.10.0";x-internal:=true,org.e
+ clipse.emf.emfstore.internal.client.ui.util;version="1.10.0";x-friend
+ s:="org.eclipse.emf.emfstore.client.ui"
 Bundle-Vendor: Eclipse Modeling Project

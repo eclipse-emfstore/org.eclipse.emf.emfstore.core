@@ -16,8 +16,11 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.eclipse.emf.emfstore.common.ESObserver;
 import org.eclipse.emf.emfstore.internal.client.test.common.observerbus.assets.A;
 import org.eclipse.emf.emfstore.internal.client.test.common.observerbus.assets.AImpl;
 import org.eclipse.emf.emfstore.internal.client.test.common.observerbus.assets.B;
@@ -33,6 +36,7 @@ import org.eclipse.emf.emfstore.internal.client.test.common.observerbus.assets.R
 import org.eclipse.emf.emfstore.internal.common.observer.ObserverBus;
 import org.eclipse.emf.emfstore.internal.common.observer.ObserverCall;
 import org.eclipse.emf.emfstore.internal.common.observer.ObserverCall.Result;
+import org.eclipse.emf.emfstore.internal.common.observer.ObserverExceptionListener;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -162,6 +166,34 @@ public class ObserverBusTest {
 		assertEquals(results.size(), 2);
 		assertFalse(results.get(0).exceptionOccurred());
 		assertTrue(results.get(1).exceptionOccurred());
+	}
+
+	@Test
+	public void observerExceptionListener() {
+		final Map<ESObserver, List<Throwable>> throwables = new LinkedHashMap<ESObserver, List<Throwable>>();
+		getObserverBus().registerExceptionListener(new ObserverExceptionListener() {
+
+			public void onException(ESObserver observer, Throwable throwable) {
+				if (!throwables.containsKey(observer)) {
+					throwables.put(observer, new ArrayList<Throwable>());
+				}
+				throwables.get(observer).add(throwable);
+			}
+		});
+		getObserverBus().register(new AImpl());
+		final BImpl bImpl = new BImpl();
+		getObserverBus().register(bImpl);
+
+		final A proxy = getObserverBus().notify(A.class);
+		proxy.returnFoobarOrException();
+
+		final List<Result> results = ((ObserverCall) proxy).getObserverCallResults();
+		assertEquals(results.size(), 2);
+		assertFalse(results.get(0).exceptionOccurred());
+		assertTrue(results.get(1).exceptionOccurred());
+		assertEquals(1, throwables.size());
+		assertTrue(throwables.containsKey(bImpl));
+		assertEquals(1, throwables.get(bImpl).size());
 	}
 
 	@Test

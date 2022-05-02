@@ -6,7 +6,7 @@
       provider-name="Eclipse Modeling Project"
       plugin="org.eclipse.emf.emfstore.modelmutator"
       license-feature="org.eclipse.emf.emfstore.license.feature"
-      license-feature-version="1.9.0.qualifier">
+      license-feature-version="1.10.0.qualifier">
 
    <description url="http://emfstore.org">
       Contains a set of plugins that may be used to alter existing

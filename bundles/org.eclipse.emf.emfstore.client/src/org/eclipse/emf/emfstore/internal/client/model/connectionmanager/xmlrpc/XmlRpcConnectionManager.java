@@ -26,6 +26,7 @@ import org.eclipse.emf.emfstore.internal.server.filetransfer.FileChunk;
 import org.eclipse.emf.emfstore.internal.server.filetransfer.FileTransferInformation;
 import org.eclipse.emf.emfstore.internal.server.model.AuthenticationInformation;
 import org.eclipse.emf.emfstore.internal.server.model.ClientVersionInfo;
+import org.eclipse.emf.emfstore.internal.server.model.FileIdentifier;
 import org.eclipse.emf.emfstore.internal.server.model.ModelFactory;
 import org.eclipse.emf.emfstore.internal.server.model.ProjectHistory;
 import org.eclipse.emf.emfstore.internal.server.model.ProjectId;
@@ -345,6 +346,21 @@ public class XmlRpcConnectionManager extends AbstractConnectionManager<XmlRpcCli
 				projectId,
 				proxyId,
 				fragmentIndex);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @see org.eclipse.emf.emfstore.internal.server.EMFStore#deleteFile(org.eclipse.emf.emfstore.internal.server.model.SessionId,
+	 *      org.eclipse.emf.emfstore.internal.server.model.ProjectId,
+	 *      org.eclipse.emf.emfstore.internal.server.model.FileIdentifier)
+	 */
+	public void deleteFile(SessionId sessionId, ProjectId projectId, FileIdentifier fileIdentifier) throws ESException {
+		getConnectionProxy(sessionId)
+			.call("deleteFile", //$NON-NLS-1$
+				sessionId,
+				projectId,
+				fileIdentifier);
 	}
 
 }

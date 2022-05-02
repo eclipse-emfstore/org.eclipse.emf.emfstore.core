@@ -2,11 +2,11 @@
 <feature
       id="org.eclipse.emf.emfstore.example.feature"
       label="EMFStore Code Examples"
-      version="1.9.0.qualifier"
+      version="1.10.0.qualifier"
       provider-name="Eclipse Modeling Project"
       plugin="org.eclipse.emf.emfstore.example.installer"
       license-feature="org.eclipse.emf.emfstore.license.feature"
-      license-feature-version="1.9.0.qualifier">
+      license-feature-version="1.10.0.qualifier">
 
    <description url="http://emfstore.org ">
       EMFStore Code Examples

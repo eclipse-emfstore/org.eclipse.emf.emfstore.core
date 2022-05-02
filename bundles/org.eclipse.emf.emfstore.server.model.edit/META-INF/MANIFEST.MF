@@ -2,30 +2,30 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: EMFStore Model Edit
 Bundle-SymbolicName: org.eclipse.emf.emfstore.server.model.edit;singleton:=true
-Bundle-Version: 1.9.0.qualifier
+Bundle-Version: 1.10.0.qualifier
 Bundle-ClassPath: .
 Bundle-Activator: org.eclipse.emf.emfstore.internal.server.model.provider.ServerEditPlugin$Implementation
 Bundle-Vendor: Eclipse Modeling Project
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: org.eclipse.emf.emfstore.internal.server.model.accessc
- ontrol.provider;version="1.9.0";x-internal:=true,org.eclipse.emf.emfs
- tore.internal.server.model.accesscontrol.roles.provider;version="1.9.
- 0";x-internal:=true,org.eclipse.emf.emfstore.internal.server.model.pr
- ovider;version="1.9.0";x-friends:="org.eclipse.emf.emfstore.client.mo
- del.edit,org.eclipse.emf.emfstore.client.test",org.eclipse.emf.emfsto
- re.internal.server.model.url.provider;version="1.9.0";x-internal:=tru
- e,org.eclipse.emf.emfstore.internal.server.model.versioning.events.pr
- ovider;version="1.9.0";x-internal:=true,org.eclipse.emf.emfstore.inte
- rnal.server.model.versioning.events.server.provider;version="1.9.0";x
- -internal:=true,org.eclipse.emf.emfstore.internal.server.model.versio
- ning.operations.provider;version="1.9.0";x-friends:="org.eclipse.emf.
- emfstore.client.ui",org.eclipse.emf.emfstore.internal.server.model.ve
- rsioning.operations.semantic.provider;version="1.9.0";x-internal:=tru
- e,org.eclipse.emf.emfstore.internal.server.model.versioning.provider;
- version="1.9.0";x-internal:=true
-Require-Bundle: org.eclipse.emf.emfstore.server.model;bundle-version="[1.9.0,2.0.0)";visibility:=reexport,
- org.eclipse.emf.emfstore.common.model.edit;bundle-version="[1.9.0,2.0.0)",
+ ontrol.provider;version="1.10.0";x-internal:=true,org.eclipse.emf.emf
+ store.internal.server.model.accesscontrol.roles.provider;version="1.1
+ 0.0";x-internal:=true,org.eclipse.emf.emfstore.internal.server.model.
+ provider;version="1.10.0";x-friends:="org.eclipse.emf.emfstore.client
+ .model.edit,org.eclipse.emf.emfstore.client.test",org.eclipse.emf.emf
+ store.internal.server.model.url.provider;version="1.10.0";x-internal:
+ =true,org.eclipse.emf.emfstore.internal.server.model.versioning.event
+ s.provider;version="1.10.0";x-internal:=true,org.eclipse.emf.emfstore
+ .internal.server.model.versioning.events.server.provider;version="1.1
+ 0.0";x-internal:=true,org.eclipse.emf.emfstore.internal.server.model.
+ versioning.operations.provider;version="1.10.0";x-friends:="org.eclip
+ se.emf.emfstore.client.ui",org.eclipse.emf.emfstore.internal.server.m
+ odel.versioning.operations.semantic.provider;version="1.10.0";x-inter
+ nal:=true,org.eclipse.emf.emfstore.internal.server.model.versioning.p
+ rovider;version="1.10.0";x-internal:=true
+Require-Bundle: org.eclipse.emf.emfstore.server.model;bundle-version="[1.10.0,2.0.0)";visibility:=reexport,
+ org.eclipse.emf.emfstore.common.model.edit;bundle-version="[1.10.0,2.0.0)",
  org.eclipse.core.runtime;bundle-version="[3.5.0,4.0.0)",
  org.eclipse.emf.edit;bundle-version="[2.5.0,3.0.0)"
 Bundle-ActivationPolicy: lazy

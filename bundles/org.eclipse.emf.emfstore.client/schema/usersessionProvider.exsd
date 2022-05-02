@@ -59,6 +59,13 @@
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="priority" type="string">
+            <annotation>
+               <documentation>
+                  If multiple session providers are registered, the one with the highest priority attribute will be chosen.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

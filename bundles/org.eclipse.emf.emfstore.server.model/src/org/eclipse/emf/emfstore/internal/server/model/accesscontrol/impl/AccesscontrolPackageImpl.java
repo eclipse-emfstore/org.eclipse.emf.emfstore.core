@@ -284,6 +284,16 @@ public class AccesscontrolPackageImpl extends EPackageImpl implements Accesscont
 	}
 
 	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 *
+	 * @generated
+	 */
+	public EAttribute getACOrgUnit_CreatedBy() {
+		return (EAttribute) acOrgUnitEClass.getEStructuralFeatures().get(4);
+	}
+
+	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
 	 *
 	 * @generated
@@ -388,6 +398,7 @@ public class AccesscontrolPackageImpl extends EPackageImpl implements Accesscont
 		createEReference(acOrgUnitEClass, AC_ORG_UNIT__ROLES);
 		createEAttribute(acOrgUnitEClass, AC_ORG_UNIT__DESCRIPTION);
 		createEReference(acOrgUnitEClass, AC_ORG_UNIT__PROPERTIES);
+		createEAttribute(acOrgUnitEClass, AC_ORG_UNIT__CREATED_BY);
 
 		acGroupEClass = createEClass(AC_GROUP);
 		createEReference(acGroupEClass, AC_GROUP__MEMBERS);
@@ -471,6 +482,8 @@ public class AccesscontrolPackageImpl extends EPackageImpl implements Accesscont
 		initEReference(getACOrgUnit_Properties(), getOrgUnitProperty(), null, "properties", null, 0, -1, //$NON-NLS-1$
 			ACOrgUnit.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, IS_RESOLVE_PROXIES,
 			!IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getACOrgUnit_CreatedBy(), ecorePackage.getEString(), "createdBy", null, 0, 1, ACOrgUnit.class, //$NON-NLS-1$
+			!IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		addEOperation(acOrgUnitEClass, getACOrgUnitId(), "getId", 0, 1, IS_UNIQUE, IS_ORDERED); //$NON-NLS-1$
 

@@ -33,6 +33,7 @@ import org.eclipse.emf.emfstore.internal.client.model.ServerInfo;
 import org.eclipse.emf.emfstore.internal.client.model.connectionmanager.ConnectionManager;
 import org.eclipse.emf.emfstore.internal.client.model.connectionmanager.KeyStoreManager;
 import org.eclipse.emf.emfstore.internal.common.ESCollections;
+import org.eclipse.emf.emfstore.internal.common.SocketUtil;
 import org.eclipse.emf.emfstore.internal.common.model.util.FileUtil;
 import org.eclipse.emf.emfstore.internal.common.model.util.ModelUtil;
 import org.eclipse.emf.emfstore.internal.common.model.util.SerializationException;
@@ -98,7 +99,8 @@ public class XmlRpcClientManager {
 			final XmlRpcSun15HttpTransportFactory factory = new XmlRpcSun15HttpTransportFactory(client);
 
 			try {
-				factory.setSSLSocketFactory(KeyStoreManager.getInstance().getSSLContext().getSocketFactory());
+				factory.setSSLSocketFactory(SocketUtil.disableSSLv3(
+					KeyStoreManager.getInstance().getSSLContext().getSocketFactory()));
 			} catch (final ESCertificateException e) {
 				throw new ConnectionException(Messages.XmlRpcClientManager_Could_Not_Load_Certificate, e);
 			}

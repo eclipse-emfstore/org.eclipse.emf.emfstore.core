@@ -490,8 +490,9 @@ public final class ModelUtil {
 			}
 		}
 		// force re-init of list
-		resourceSaveOptions.put(XMLResource.OPTION_USE_CACHED_LOOKUP_TABLE, new ArrayList<Object>());
-		return resourceSaveOptions;
+		final Map<Object, Object> optionsCopy = new LinkedHashMap<Object, Object>(resourceSaveOptions);
+		optionsCopy.put(XMLResource.OPTION_USE_CACHED_LOOKUP_TABLE, new ArrayList<Object>());
+		return optionsCopy;
 	}
 
 	/**

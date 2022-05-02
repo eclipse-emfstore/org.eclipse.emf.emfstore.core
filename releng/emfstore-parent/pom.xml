@@ -5,7 +5,7 @@
 
 	<groupId>org.eclipse.emf.emfstore</groupId>
 	<artifactId>emfstore-parent</artifactId>
-	<version>1.9.0-SNAPSHOT</version>
+	<version>1.10.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<properties>
@@ -15,9 +15,9 @@
 		<junit-version>4.8.2</junit-version>
 		<maven-checkstyle-version>2.10</maven-checkstyle-version>
 		<jacoco-version>0.7.4.201502262128</jacoco-version>
-		<javadoc-version>2.9</javadoc-version>
-		<javadoc-title>EMFStore 1.9.0 API</javadoc-title>
-		<emfstore-version>1.9.0-SNAPSHOT</emfstore-version>
+		<javadoc-version>2.10.4</javadoc-version>
+		<javadoc-title>EMFStore 1.10.0 API</javadoc-title>
+		<emfstore-version>1.10.0-SNAPSHOT</emfstore-version>
 		<jarsigner-version>1.1.4</jarsigner-version>
 		<maven.antrun.plugin.version>1.7</maven.antrun.plugin.version>
 		<!-- Properties to enable jacoco code coverage analysis with sonar -->
@@ -57,14 +57,14 @@
 			<build>
 				<plugins>
 					<!-- Configure build to use the java compiler as specified in manifest -->
-					<plugin>
+					<!--plugin>
 						<groupId>org.eclipse.tycho</groupId>
 						<artifactId>tycho-compiler-plugin</artifactId>
 						<version>${tycho-version}</version>
 						<configuration>
 							<useJDK>BREE</useJDK>
 						</configuration>
-					</plugin>
+					</plugin-->
 				</plugins>
 			</build>
 		</profile>
@@ -247,6 +247,7 @@
 					<show>public</show>
 					<nohelp>true</nohelp>
 					<excludePackageNames>*.test.*:*.bowling.*:*.example.*:*.eclipse.wb.*</excludePackageNames>
+					<additionalparam>-Xdoclint:none</additionalparam>
 					<tags>
 						<tag>
 							<name>generated</name>

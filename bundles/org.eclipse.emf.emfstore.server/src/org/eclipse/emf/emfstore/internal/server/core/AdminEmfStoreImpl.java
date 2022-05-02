@@ -15,7 +15,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.emf.common.notify.Adapter;
@@ -26,7 +28,9 @@ import org.eclipse.emf.emfstore.internal.common.APIUtil;
 import org.eclipse.emf.emfstore.internal.common.model.util.ModelUtil;
 import org.eclipse.emf.emfstore.internal.server.AdminEmfStore;
 import org.eclipse.emf.emfstore.internal.server.accesscontrol.AccessControl;
+import org.eclipse.emf.emfstore.internal.server.accesscontrol.HasRolePredicate;
 import org.eclipse.emf.emfstore.internal.server.connection.xmlrpc.util.ShareProjectAdapter;
+import org.eclipse.emf.emfstore.internal.server.core.helper.ACHelper;
 import org.eclipse.emf.emfstore.internal.server.exceptions.AccessControlException;
 import org.eclipse.emf.emfstore.internal.server.exceptions.FatalESException;
 import org.eclipse.emf.emfstore.internal.server.exceptions.InvalidInputException;
@@ -42,9 +46,11 @@ import org.eclipse.emf.emfstore.internal.server.model.accesscontrol.ACOrgUnit;
 import org.eclipse.emf.emfstore.internal.server.model.accesscontrol.ACOrgUnitId;
 import org.eclipse.emf.emfstore.internal.server.model.accesscontrol.ACUser;
 import org.eclipse.emf.emfstore.internal.server.model.accesscontrol.AccesscontrolFactory;
+import org.eclipse.emf.emfstore.internal.server.model.accesscontrol.roles.ProjectAdminRole;
 import org.eclipse.emf.emfstore.internal.server.model.accesscontrol.roles.Role;
 import org.eclipse.emf.emfstore.internal.server.model.accesscontrol.roles.RolesFactory;
 import org.eclipse.emf.emfstore.internal.server.model.accesscontrol.roles.RolesPackage;
+import org.eclipse.emf.emfstore.internal.server.model.accesscontrol.roles.ServerAdmin;
 import org.eclipse.emf.emfstore.internal.server.model.impl.api.ESGroupImpl;
 import org.eclipse.emf.emfstore.internal.server.model.impl.api.ESUserImpl;
 import org.eclipse.emf.emfstore.server.auth.ESAuthorizationService;
@@ -53,8 +59,12 @@ import org.eclipse.emf.emfstore.server.auth.ESPasswordHashGenerator.ESHashAndSal
 import org.eclipse.emf.emfstore.server.auth.ESProjectAdminPrivileges;
 import org.eclipse.emf.emfstore.server.exceptions.ESException;
 import org.eclipse.emf.emfstore.server.model.ESGroup;
+import org.eclipse.emf.emfstore.server.model.ESOrgUnitId;
 import org.eclipse.emf.emfstore.server.model.ESSessionId;
 import org.eclipse.emf.emfstore.server.model.ESUser;
+
+import com.google.common.base.Optional;
+import com.google.common.collect.Iterables;
 
 /**
  * Implementation of {@link AdminEmfStore} interface.
@@ -95,7 +105,7 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements Admi
 			clearMembersFromGroup(copy);
 			result.add(copy);
 		}
-		return result;
+		return removeInvisibleOrgUnits(result, sessionId.toAPI());
 	}
 
 	private List<ACGroup> getGroups() {
@@ -132,7 +142,7 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements Admi
 				result.add(copy);
 			}
 		}
-		return result;
+		return removeInvisibleOrgUnits(result, sessionId.toAPI());
 	}
 
 	/**
@@ -153,6 +163,10 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements Admi
 		final ACGroup acGroup = AccesscontrolFactory.eINSTANCE.createACGroup();
 		acGroup.setName(name);
 		acGroup.setDescription(StringUtils.EMPTY);
+		final Optional<ACUser> parent = getUserFromSessionId(sessionId);
+		if (parent.isPresent()) {
+			acGroup.setCreatedBy(parent.get().getId().getId());
+		}
 		getAccessControl().getOrgUnitProviderService().addGroup(acGroup.toAPI());
 		save();
 		return ModelUtil.clone(acGroup.getId());
@@ -328,6 +342,7 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements Admi
 			for (final Role role : roles) {
 				if (isServerAdmin(role) || role.getProjects().contains(projectId)) {
 					result.add(ModelUtil.clone(orgUnit));
+					break;
 				}
 			}
 		}
@@ -337,6 +352,7 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements Admi
 			for (final Role role : roles) {
 				if (isServerAdmin(role) || role.getProjects().contains(projectId)) {
 					result.add(ModelUtil.clone(orgUnit));
+					break;
 				}
 			}
 		}
@@ -429,6 +445,16 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements Admi
 				return;
 			}
 		}
+
+		// If we get until here, the user has the priviliges to create the project and be the initial participant.
+		// Because the corresponding role was not found in the user's roles, it must be part of one of the user's
+		// groups. To avoid the whole group becoming participants of the project, create the role for the user and add
+		// the project id.
+		final Role newRole = createRoleFromEClass(roleClass);
+
+		newRole.getProjects().add(ModelUtil.clone(projectId));
+		orgUnit.getRoles().add(newRole);
+		save();
 	}
 
 	private static void checkIfSessionIsAssociatedWithProject(SessionId sessionId, ProjectId projectId)
@@ -506,10 +532,17 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements Admi
 
 		final ACOrgUnit<?> oUnit = getOrgUnit(orgUnitId);
 		final List<Role> roles = oUnit.getRoles();
+		Role nonServerAdminRole = null;
 		for (final Role role : roles) {
-			if (isServerAdmin(role) || role.getProjects().contains(projectId)) {
+			if (isServerAdmin(role)) {
 				return role;
 			}
+			if (nonServerAdminRole == null && role.getProjects().contains(projectId)) {
+				nonServerAdminRole = role;
+			}
+		}
+		if (nonServerAdminRole != null) {
+			return nonServerAdminRole;
 		}
 		throw new ESException(Messages.AdminEmfStoreImpl_Could_Not_Find_OrgUnit);
 	}
@@ -624,7 +657,7 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements Admi
 		for (final ACUser user : getUsers()) {
 			result.add(user);
 		}
-		return result;
+		return removeInvisibleOrgUnits(result, sessionId.toAPI());
 	}
 
 	/**
@@ -649,7 +682,7 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements Admi
 
 		// quickfix
 		clearMembersFromGroups(result);
-		return result;
+		return removeInvisibleOrgUnits(result, sessionId.toAPI());
 	}
 
 	/**
@@ -687,9 +720,32 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements Admi
 		final ACUser acUser = AccesscontrolFactory.eINSTANCE.createACUser();
 		acUser.setName(name);
 		acUser.setDescription(StringUtils.EMPTY);
+		final Optional<ACUser> parent = getUserFromSessionId(sessionId);
+		if (parent.isPresent()) {
+			acUser.setCreatedBy(parent.get().getId().getId());
+		}
 		getAccessControl().getOrgUnitProviderService().addUser(acUser.toAPI());
 		save();
 		return ModelUtil.clone(acUser.getId());
+	}
+
+	private Optional<ACUser> getUserFromSessionId(SessionId sessionId) {
+		try {
+			final ESOrgUnitId orgUnitId = getAccessControl().getSessions().resolveToOrgUnitId(sessionId.toAPI());
+			if (orgUnitId == null) {
+				return Optional.absent();
+			}
+			final ACOrgUnitId internalId = APIUtil.toInternal(ACOrgUnitId.class, orgUnitId);
+			for (final ESUser user : getAccessControl().getOrgUnitProviderService().getUsers()) {
+				final ACUser internalAPI = (ACUser) ESUserImpl.class.cast(user).toInternalAPI();
+				if (internalAPI.getId().equals(internalId)) {
+					return Optional.of(internalAPI);
+				}
+			}
+			return Optional.absent();
+		} catch (final AccessControlException ex) {
+			return Optional.absent();
+		}
 	}
 
 	private boolean userExists(String name) {
@@ -714,19 +770,35 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements Admi
 			sessionId.toAPI(),
 			null,
 			ESProjectAdminPrivileges.DeleteOrgUnit);
+		ACUser userToDelete = null;
 		for (final Iterator<ACUser> iter = getUsers().iterator(); iter.hasNext();) {
 			final ACUser user = iter.next();
-			final List<ACGroup> groups = getGroups(sessionId, userId);
-			if (user.getId().equals(userId)) {
-				for (final ACGroup acGroup : groups) {
-					removeMember(sessionId, acGroup.getId(), userId);
-				}
-				getAccessControl().getOrgUnitProviderService().removeUser(user.toAPI());
-				// TODO: move ecore delete into ServerSpace#deleteUser implementation
-				EcoreUtil.delete(user);
-				save();
-				return;
+
+			/* check if we were created by the deleted user */
+			if (user.getCreatedBy() != null && user.getCreatedBy().equals(userId.getId())) {
+				user.setCreatedBy(null);
 			}
+
+			/* check if we are the deleted user */
+			if (user.getId().equals(userId)) {
+				userToDelete = user;
+			}
+		}
+		for (final ACGroup group : getGroups()) {
+			if (group.getCreatedBy() != null && group.getCreatedBy().equals(userId.getId())) {
+				group.setCreatedBy(null);
+			}
+		}
+		/* perform deletion */
+		if (userToDelete != null) {
+			final List<ACGroup> groups = getGroups(sessionId, userId);
+			for (final ACGroup acGroup : groups) {
+				removeMember(sessionId, acGroup.getId(), userId);
+			}
+			getAccessControl().getOrgUnitProviderService().removeUser(userToDelete.toAPI());
+			// TODO: move ecore delete into ServerSpace#deleteUser implementation
+			EcoreUtil.delete(userToDelete);
+			save();
 		}
 	}
 
@@ -784,11 +856,33 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements Admi
 	private void updateUser(ACOrgUnitId userId, String name, String password) throws ESException {
 
 		final ACUser user = (ACUser) getOrgUnit(userId);
-		user.setName(name);
 		final ESPasswordHashGenerator passwordHashGenerator = AccessControl.getESPasswordHashGenerator();
+
+		if (!checkUserNameChanged(user.getName(), name) && user.getPassword() != null) {
+			/*
+			 * when the user name does not change only the password is updated
+			 * -> check if password is really changed
+			 */
+			final int separatorIndex = user.getPassword().indexOf(ESHashAndSalt.SEPARATOR);
+			final String hash = user.getPassword().substring(0, separatorIndex);
+			final String salt = user.getPassword().substring(separatorIndex + 1);
+			if (passwordHashGenerator.verifyPassword(password, hash, salt)) {
+				/* no change */
+				throw new ESException(Messages.AdminEmfStoreImpl_SamePassword);
+			}
+		}
+
+		user.setName(name);
 		final ESHashAndSalt hashAndSalt = passwordHashGenerator.hashPassword(password);
 		user.setPassword(hashAndSalt.getHash() + ESHashAndSalt.SEPARATOR + hashAndSalt.getSalt());
 		save();
+	}
+
+	private boolean checkUserNameChanged(String oldName, String newName) {
+		if (oldName == null) {
+			return newName != null;
+		}
+		return !oldName.equals(newName);
 	}
 
 	/**
@@ -896,6 +990,76 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements Admi
 				throw new InvalidInputException();
 			}
 		}
+	}
+
+	private <T extends ACOrgUnit<?>> List<T> removeInvisibleOrgUnits(List<T> orgUnits, ESSessionId sessionId)
+		throws AccessControlException {
+		/*
+		 * regular users can't see any orgunits, while server admins can see all of them. Only project admins have
+		 * reduced visibility.
+		 */
+		final ESOrgUnitId adminId = getAccessControl().getSessions().resolveToOrgUnitId(sessionId);
+		final Optional<ACOrgUnit<?>> orgUnit = ACHelper.getOrgUnit(
+			getAccessControl().getOrgUnitProviderService(),
+			adminId);
+		if (!orgUnit.isPresent()) {
+			return orgUnits;
+		}
+		final List<Role> allRolesOfAdmin = ACHelper.getAllRoles(
+			getAccessControl().getOrgUnitResolverServive(),
+			orgUnit.get());
+		if (Iterables.any(allRolesOfAdmin, new HasRolePredicate(ServerAdmin.class))) {
+			return orgUnits;
+		}
+		final List<ProjectAdminRole> projectAdminRoles = new ArrayList<ProjectAdminRole>();
+		for (final Role role : allRolesOfAdmin) {
+			if (ProjectAdminRole.class.isInstance(role)) {
+				projectAdminRoles.add((ProjectAdminRole) role);
+			}
+		}
+
+		/* we are dealing with a project admin */
+		final List<T> result = new ArrayList<T>();
+		for (final T unit : orgUnits) {
+			if (Iterables.any(ACHelper.getAllRoles(getAccessControl().getOrgUnitResolverServive(), unit),
+				new HasRolePredicate(ServerAdmin.class))) {
+				/* server admins should not be visible to project admin */
+				continue;
+			}
+			/* units are visible to project admin if */
+			if (wasCreatedByProjectAdmin(unit, orgUnit.get()) // the unit was created by this admin
+				|| hasRoleInProjectOfProjectAdmin(unit, projectAdminRoles) // the unit has a role on at least one of the
+																			// projects administered by the admin
+			) {
+				result.add(unit);
+			}
+		}
+		return result;
+	}
+
+	private boolean wasCreatedByProjectAdmin(ACOrgUnit<?> orgUnit, ACOrgUnit<?> admin) {
+		return admin.getId().getId().equals(orgUnit.getCreatedBy());
+	}
+
+	private boolean hasRoleInProjectOfProjectAdmin(ACOrgUnit<?> orgUnit, List<ProjectAdminRole> projectAdminRoles) {
+		/* collect all administered projects */
+		final Set<ProjectId> projects = new LinkedHashSet<ProjectId>();
+		for (final ProjectAdminRole projectAdminRole : projectAdminRoles) {
+			projects.addAll(projectAdminRole.getProjects());
+		}
+
+		for (final ProjectId projectId : projects) {
+			/* check if any role of unit has access to project */
+			for (final Role role : ACHelper.getAllRoles(getAccessControl().getOrgUnitResolverServive(), orgUnit)) {
+				if (role.canRead(projectId, null)
+					|| role.canModify(projectId, null)
+					|| role.canCreate(projectId, null)
+					|| role.canDelete(projectId, null)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	/**

@@ -137,7 +137,7 @@ public class ClientHrefMigrator extends ServerHrefMigrator {
 		final DocumentBuilderFactory docFactory = DocumentBuilderFactory
 			.newInstance();
 		final DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-		final Document doc = docBuilder.parse(pathToFile);
+		final Document doc = docBuilder.parse(new File(pathToFile).toURI().toString());
 
 		final NodeList tagElements = doc.getElementsByTagName(tagName);
 

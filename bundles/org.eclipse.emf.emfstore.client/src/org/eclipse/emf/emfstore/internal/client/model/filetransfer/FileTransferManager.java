@@ -26,6 +26,7 @@ import org.eclipse.emf.emfstore.internal.client.model.impl.ProjectSpaceBase;
 import org.eclipse.emf.emfstore.internal.client.model.util.EMFStoreClientUtil;
 import org.eclipse.emf.emfstore.internal.client.model.util.WorkspaceUtil;
 import org.eclipse.emf.emfstore.internal.server.exceptions.FileTransferException;
+import org.eclipse.emf.emfstore.internal.server.filetransfer.FileTransferInformation;
 import org.eclipse.emf.emfstore.internal.server.model.FileIdentifier;
 import org.eclipse.emf.emfstore.internal.server.model.ModelFactory;
 import org.eclipse.emf.emfstore.internal.server.model.ProjectId;
@@ -207,6 +208,33 @@ public class FileTransferManager {
 			}
 		} catch (final FileTransferException e) {
 			WorkspaceUtil.logException(Messages.FileTransferManager_UploadFailed, e);
+		}
+	}
+
+	/**
+	 * Delete the given file.
+	 *
+	 * @param progress an {@link IProgressMonitor} to monitor progress
+	 * @param fileIdentifier the ID of the file to be deleted
+	 */
+	public void deleteFile(IProgressMonitor progress, FileIdentifier fileIdentifier) {
+		final FileTransferInformation fileTransferInformation = new FileTransferInformation(fileIdentifier, 0);
+		final FileDeleteJob job = new FileDeleteJob(this, fileTransferInformation,
+			MessageFormat.format(Messages.FileTransferManager_DeleteFile, fileIdentifier.getIdentifier()));
+		final IStatus result = job.run(progress);
+		cacheManager.removeCachedFile(fileIdentifier);
+
+		if (job.getException() != null) {
+			WorkspaceUtil.logException(
+				MessageFormat.format(
+					Messages.FileTransferManager_DeleteFileError,
+					fileIdentifier.getIdentifier()),
+				job.getException());
+			return;
+		}
+
+		if (result.getCode() == IStatus.CANCEL) {
+			return;
 		}
 	}
 

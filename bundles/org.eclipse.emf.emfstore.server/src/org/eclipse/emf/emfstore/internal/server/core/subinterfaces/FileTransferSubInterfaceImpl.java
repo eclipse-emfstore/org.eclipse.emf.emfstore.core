@@ -27,6 +27,7 @@ import org.eclipse.emf.emfstore.internal.server.exceptions.InvalidInputException
 import org.eclipse.emf.emfstore.internal.server.filetransfer.FileChunk;
 import org.eclipse.emf.emfstore.internal.server.filetransfer.FilePartitionerUtil;
 import org.eclipse.emf.emfstore.internal.server.filetransfer.FileTransferInformation;
+import org.eclipse.emf.emfstore.internal.server.model.FileIdentifier;
 import org.eclipse.emf.emfstore.internal.server.model.ProjectId;
 import org.eclipse.emf.emfstore.internal.server.storage.XMIServerURIConverter;
 import org.eclipse.emf.emfstore.server.auth.ESMethod;
@@ -93,6 +94,20 @@ public class FileTransferSubInterfaceImpl extends AbstractSubEmfstoreInterface {
 	}
 
 	/**
+	 * Delete the given file
+	 *
+	 * @param projectId the ID of the project associated with the file to be deleted
+	 * @param fileIdentifier the ID of the file to be deleted
+	 */
+	@ESMethod(MethodId.DELETEFILE)
+	public void deleteFile(ProjectId projectId, FileIdentifier fileIdentifier) {
+		synchronized (MonitorProvider.getInstance().getMonitor(FILELOAD)) {
+			final File cachedFile = getCachedFile(fileIdentifier, projectId);
+			cachedFile.delete();
+		}
+	}
+
+	/**
 	 * Writes a chunk to the file linked to the fileInformation in the fileChunk. If the data in the file chunk is null,
 	 * this is treated as a request for a file version.
 	 *
@@ -130,7 +145,7 @@ public class FileTransferSubInterfaceImpl extends AbstractSubEmfstoreInterface {
 			if (fileChunk.isLast()) {
 				try {
 					// retrieve final location for file
-					final File attachmentFile = getCachedFile(fileInfo, projectId);
+					final File attachmentFile = getCachedFile(fileInfo.getFileIdentifier(), projectId);
 
 					FileUtil.copyFile(tmpFile, attachmentFile);
 					tmpFile.delete();
@@ -163,7 +178,7 @@ public class FileTransferSubInterfaceImpl extends AbstractSubEmfstoreInterface {
 	}
 
 	private File findFile(FileTransferInformation fileInfo, ProjectId projectId) throws FileNotFoundException {
-		final File file = getCachedFile(fileInfo, projectId);
+		final File file = getCachedFile(fileInfo.getFileIdentifier(), projectId);
 		if (file.exists()) {
 			return file;
 		}
@@ -173,15 +188,17 @@ public class FileTransferSubInterfaceImpl extends AbstractSubEmfstoreInterface {
 	}
 
 	private File getTempFile(FileTransferInformation fileInfo, ProjectId projectId) {
-		return new File(getProjectAttachmentTempFolder(projectId) + File.separator + constructFileName(fileInfo));
+		return new File(getProjectAttachmentTempFolder(projectId) + File.separator
+			+ constructFileName(fileInfo.getFileIdentifier()));
 	}
 
-	private File getCachedFile(FileTransferInformation fileInfo, ProjectId projectId) {
-		return new File(getProjectAttachmentFolder(projectId) + File.separator + constructFileName(fileInfo));
+	private File getCachedFile(FileIdentifier fileIdentifier, ProjectId projectId) {
+		return new File(
+			getProjectAttachmentFolder(projectId) + File.separator + constructFileName(fileIdentifier));
 	}
 
-	private String constructFileName(FileTransferInformation fileInfo) {
-		return fileInfo.getFileIdentifier().getIdentifier();
+	private String constructFileName(FileIdentifier fileIdentifier) {
+		return fileIdentifier.getIdentifier();
 	}
 
 	private String getProjectAttachmentFolder(ProjectId projectId) {

@@ -2,70 +2,51 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: EMFStore Common Model
 Bundle-SymbolicName: org.eclipse.emf.emfstore.common.model;singleton:=true
-Bundle-Version: 1.9.0.qualifier
+Bundle-Version: 1.10.0.qualifier
 Bundle-ClassPath: .
 Bundle-Vendor: Eclipse Modeling Project
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Require-Bundle: org.eclipse.emf.emfstore.common;bundle-version="[1.9.0,2.0.0)";visibility:=reexport,
+Require-Bundle: org.eclipse.emf.emfstore.common;bundle-version="[1.10.0,2.0.0)";visibility:=reexport,
  org.eclipse.emf.ecore;bundle-version="[2.5.0,3.0.0)",
  org.eclipse.core.runtime;bundle-version="[3.5.0,4.0.0)",
  org.eclipse.emf.ecore.xmi;bundle-version="[2.5.0,3.0.0)"
 Bundle-ActivationPolicy: lazy
-Export-Package: org.eclipse.emf.emfstore.common.model;version="1.9.0",
- org.eclipse.emf.emfstore.common.model.util;version="1.9.0",
- org.eclipse.emf.emfstore.internal.common.model;version="1.9.0";
-  x-friends:="org.eclipse.emf.emfstore.client,
-   org.eclipse.emf.emfstore.client.model.edit,
-   org.eclipse.emf.emfstore.client.ui,
-   org.eclipse.emf.emfstore.common.model.edit,
-   org.eclipse.emf.emfstore.ecore,
-   org.eclipse.emf.emfstore.example.merging,
-   org.eclipse.emf.emfstore.fuzzy.emf.test,
-   org.eclipse.emf.emfstore.server,
-   org.eclipse.emf.emfstore.server.model,
-   org.eclipse.emf.emfstore.server.model.edit,
-   org.eclipse.emf.emfstore.test.common,
-   org.eclipse.emf.emfstore.client.changetracking.test,
-   org.eclipse.emf.emfstore.client.conflictdetection.test,
-   org.eclipse.emf.emfstore.client.recording.test,
-   org.eclipse.emf.emfstore.client.test,
-   org.eclipse.emf.emfstore.server.test,
-   org.eclipse.emf.ecp.emfstore.core,
-   org.eclipse.emf.ecp.emfstore.ui.e3,
-   org.eclipse.emf.emfstore.performance.test,
-   org.eclipse.emf.emfstore.fuzzy.emf,
-   org.eclipse.emf.emfstore.client.ui.test,
-   org.eclipse.emf.emfstore.ecore.test",
- org.eclipse.emf.emfstore.internal.common.model.impl;version="1.9.0";
-  x-friends:="org.eclipse.emf.emfstore.client,
-   org.eclipse.emf.emfstore.client.changetracking.test,
-   org.eclipse.emf.emfstore.client.recording.test,
-   org.eclipse.emf.emfstore.client.ui,
-   org.eclipse.emf.emfstore.server,
-   org.eclipse.emf.emfstore.server.model,
-   org.eclipse.emf.ecp.emfstore.core,
-   org.eclipse.emf.emfstore.client.conflictdetection.test",
- org.eclipse.emf.emfstore.internal.common.model.impl.util;version="1.9.0";x-internal:=true,
- org.eclipse.emf.emfstore.internal.common.model.util;version="1.9.0";
-  x-friends:="org.eclipse.emf.emfstore.client,
-   org.eclipse.emf.emfstore.client.ui,
-   org.eclipse.emf.emfstore.common.model.edit,
-   org.eclipse.emf.emfstore.fuzzy.emf.test,
-   org.eclipse.emf.emfstore.migration,
-   org.eclipse.emf.emfstore.server,
-   org.eclipse.emf.emfstore.server.model,
-   org.eclipse.emf.emfstore.server.model.edit,
-   org.eclipse.emf.emfstore.server.test,
-   org.eclipse.emf.emfstore.test.common,
-   org.eclipse.emf.emfstore.client.changetracking.test,
-   org.eclipse.emf.emfstore.client.recording.test,
-   org.eclipse.emf.emfstore.client.test,
-   org.eclipse.emf.emfstore.client.conflictdetection.test,
-   org.eclipse.emf.ecp.emfstore.core,
-   org.eclipse.emf.emfstore.client.api.test,
-   org.eclipse.emf.emfstore.performance.test,
-   org.eclipse.emf.emfstore.migration.edapt,
-   org.eclipse.emf.emfstore.ecore.test,
-   org.eclipse.emf.emfstore.ecore"
+Export-Package: org.eclipse.emf.emfstore.common.model;version="1.10.0"
+ ,org.eclipse.emf.emfstore.common.model.util;version="1.10.0",org.ecli
+ pse.emf.emfstore.internal.common.model;version="1.10.0"; x-friends:="
+ org.eclipse.emf.emfstore.client,  org.eclipse.emf.emfstore.client.mod
+ el.edit,  org.eclipse.emf.emfstore.client.ui,  org.eclipse.emf.emfsto
+ re.common.model.edit,  org.eclipse.emf.emfstore.ecore,  org.eclipse.e
+ mf.emfstore.example.merging,  org.eclipse.emf.emfstore.fuzzy.emf.test
+ ,  org.eclipse.emf.emfstore.server,  org.eclipse.emf.emfstore.server.
+ model,  org.eclipse.emf.emfstore.server.model.edit,  org.eclipse.emf.
+ emfstore.test.common,  org.eclipse.emf.emfstore.client.changetracking
+ .test,  org.eclipse.emf.emfstore.client.conflictdetection.test,  org.
+ eclipse.emf.emfstore.client.recording.test,  org.eclipse.emf.emfstore
+ .client.test,  org.eclipse.emf.emfstore.server.test,  org.eclipse.emf
+ .ecp.emfstore.core,  org.eclipse.emf.ecp.emfstore.ui.e3,  org.eclipse
+ .emf.emfstore.performance.test,  org.eclipse.emf.emfstore.fuzzy.emf, 
+  org.eclipse.emf.emfstore.client.ui.test,  org.eclipse.emf.emfstore.e
+ core.test",org.eclipse.emf.emfstore.internal.common.model.impl;versio
+ n="1.10.0"; x-friends:="org.eclipse.emf.emfstore.client,  org.eclipse
+ .emf.emfstore.client.changetracking.test,  org.eclipse.emf.emfstore.c
+ lient.recording.test,  org.eclipse.emf.emfstore.client.ui,  org.eclip
+ se.emf.emfstore.server,  org.eclipse.emf.emfstore.server.model,  org.
+ eclipse.emf.ecp.emfstore.core,  org.eclipse.emf.emfstore.client.confl
+ ictdetection.test",org.eclipse.emf.emfstore.internal.common.model.imp
+ l.util;version="1.10.0";x-internal:=true,org.eclipse.emf.emfstore.int
+ ernal.common.model.util;version="1.10.0"; x-friends:="org.eclipse.emf
+ .emfstore.client,  org.eclipse.emf.emfstore.client.ui,  org.eclipse.e
+ mf.emfstore.common.model.edit,  org.eclipse.emf.emfstore.fuzzy.emf.te
+ st,  org.eclipse.emf.emfstore.migration,  org.eclipse.emf.emfstore.se
+ rver,  org.eclipse.emf.emfstore.server.model,  org.eclipse.emf.emfsto
+ re.server.model.edit,  org.eclipse.emf.emfstore.server.test,  org.ecl
+ ipse.emf.emfstore.test.common,  org.eclipse.emf.emfstore.client.chang
+ etracking.test,  org.eclipse.emf.emfstore.client.recording.test,  org
+ .eclipse.emf.emfstore.client.test,  org.eclipse.emf.emfstore.client.c
+ onflictdetection.test,  org.eclipse.emf.ecp.emfstore.core,  org.eclip
+ se.emf.emfstore.client.api.test,  org.eclipse.emf.emfstore.performanc
+ e.test,  org.eclipse.emf.emfstore.migration.edapt,  org.eclipse.emf.e
+ mfstore.ecore.test,  org.eclipse.emf.emfstore.ecore"
 

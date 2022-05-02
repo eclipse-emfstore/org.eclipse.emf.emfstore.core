@@ -11,6 +11,8 @@
  ******************************************************************************/
 package org.eclipse.emf.emfstore.internal.server.connection.xmlrpc;
 
+import static org.eclipse.emf.emfstore.internal.common.SocketUtil.disableSSLv3AndReturn;
+
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -23,6 +25,7 @@ import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.SSLSocket;
 
 import org.apache.xmlrpc.webserver.WebServer;
+import org.eclipse.emf.emfstore.internal.common.FatalSocketException;
 import org.eclipse.emf.emfstore.internal.common.model.util.ModelUtil;
 import org.eclipse.emf.emfstore.internal.server.EMFStoreController;
 import org.eclipse.emf.emfstore.internal.server.ServerConfiguration;
@@ -86,7 +89,12 @@ public class EMFStoreWebServer extends WebServer {
 			shutdown(serverSocketFactory, exception);
 		}
 
-		return serverSocketFactory.createServerSocket(pPort, backlog, addr);
+		try {
+			return disableSSLv3AndReturn(serverSocketFactory.createServerSocket(pPort, backlog, addr));
+		} catch (final FatalSocketException ex) {
+			shutdown(null, ex);
+			throw new IOException(ex.getMessage());
+		}
 	}
 
 	private void shutdown(SSLServerSocketFactory serverSocketFactory, Exception e) {
@@ -95,4 +103,5 @@ public class EMFStoreWebServer extends WebServer {
 			EMFStoreController.getInstance().shutdown(new FatalESException());
 		}
 	}
+
 }

@@ -292,6 +292,7 @@
             ecoreFeature="ecore:EReference server.ecore#//accesscontrol/ACOrgUnit/roles"/>
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute server.ecore#//accesscontrol/ACOrgUnit/description"/>
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference server.ecore#//accesscontrol/ACOrgUnit/properties"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute server.ecore#//accesscontrol/ACOrgUnit/createdBy"/>
         <genOperations ecoreOperation="server.ecore#//accesscontrol/ACOrgUnit/getId"/>
       </genClasses>
       <genClasses ecoreClass="server.ecore#//accesscontrol/ACGroup">

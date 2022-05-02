@@ -2,11 +2,11 @@
 <feature
       id="org.eclipse.emf.emfstore.common.feature"
       label="EMFStore Common"
-      version="1.9.0.qualifier"
+      version="1.10.0.qualifier"
       provider-name="Eclipse Modeling Project"
       plugin="org.eclipse.emf.emfstore.common"
       license-feature="org.eclipse.emf.emfstore.license.feature"
-      license-feature-version="1.9.0.qualifier">
+      license-feature-version="1.10.0.qualifier">
 
    <description url="http://emfstore.org">
       Contains common plugins of EMFStore that are used by other EMFStore features.

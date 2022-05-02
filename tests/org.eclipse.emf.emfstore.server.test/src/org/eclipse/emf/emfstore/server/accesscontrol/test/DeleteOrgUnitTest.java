@@ -215,17 +215,17 @@ public class DeleteOrgUnitTest extends ProjectAdminTest {
 		final ACOrgUnitId newUser = getSuperAdminBroker().createUser(getNewUsername());
 		final ACOrgUnitId group = getSuperAdminBroker().createGroup(getNewGroupName());
 		final ACOrgUnitId otherGroup = getSuperAdminBroker().createGroup(getNewOtherGroupName());
-		getAdminBroker().addMember(group, otherGroup);
-		getAdminBroker().addMember(otherGroup, newUser);
+		getSuperAdminBroker().addMember(group, otherGroup);
+		getSuperAdminBroker().addMember(otherGroup, newUser);
 
 		ProjectUtil.share(getUsersession(), getLocalProject());
-		final ProjectSpace clonedProjectSpace = cloneProjectSpace(getProjectSpace());
-		ProjectUtil.share(getSuperUsersession(), clonedProjectSpace.toAPI());
 
-		getAdminBroker().changeRole(getProjectSpace().getProjectId(), group, Roles.writer());
-		final int oldSize = getAdminBroker().getGroups().size();
+		getSuperAdminBroker().changeRole(getProjectSpace().getProjectId(), group, Roles.writer());
+
+		final int oldSize = getSuperAdminBroker().getGroups().size();
 		getAdminBroker().deleteGroup(group);
-		assertEquals(oldSize - 1, getAdminBroker().getGroups().size());
+		assertEquals(oldSize - 1, getSuperAdminBroker().getGroups().size());
+		assertEquals(oldSize - 2, getAdminBroker().getGroups().size());// got invisible
 	}
 
 	/**

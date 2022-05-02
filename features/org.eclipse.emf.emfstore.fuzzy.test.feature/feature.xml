@@ -2,10 +2,10 @@
 <feature
       id="org.eclipse.emf.emfstore.fuzzy.test.feature"
       label="EMFStore Fuzzy Tests"
-      version="1.9.0.qualifier"
+      version="1.10.0.qualifier"
       provider-name="Eclipse Modeling Project"
       license-feature="org.eclipse.emf.emfstore.license.feature"
-      license-feature-version="1.9.0.qualifier">
+      license-feature-version="1.10.0.qualifier">
 
    <description url="http://www.example.com/description">
       This feature contains the integration plugins for EMFStore with fuzzy testing.

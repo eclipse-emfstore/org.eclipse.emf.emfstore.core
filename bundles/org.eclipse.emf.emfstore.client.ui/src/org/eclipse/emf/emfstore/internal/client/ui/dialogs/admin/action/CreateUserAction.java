@@ -19,9 +19,13 @@ import org.apache.commons.lang.StringUtils;
 import org.eclipse.emf.emfstore.common.extensionpoint.ESExtensionPoint;
 import org.eclipse.emf.emfstore.internal.client.model.AdminBroker;
 import org.eclipse.emf.emfstore.internal.client.ui.dialogs.admin.PropertiesForm;
+import org.eclipse.emf.emfstore.internal.client.ui.util.PasswordHelper;
 import org.eclipse.emf.emfstore.internal.server.model.accesscontrol.ACOrgUnitId;
 import org.eclipse.emf.emfstore.server.exceptions.ESException;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 
 /**
  * Action for creating a user.
@@ -109,6 +113,20 @@ public class CreateUserAction extends CreateOrgUnitAction {
 		}
 
 		return userId;
+	}
+
+	@Override
+	protected boolean validateFieldValues(Map<String, String> fieldValues) {
+		final String pwd = fieldValues.get(PW_FIELD_NAME);
+		if (passwordControlsEnabled() && !PasswordHelper.INSTANCE.matchesPattern(pwd)) {
+			final Shell shell = Display.getCurrent().getActiveShell();
+			MessageDialog
+				.openWarning(shell,
+					Messages.CreateUserAction_InvalidPasswordTitle,
+					PasswordHelper.INSTANCE.getInvalidPatternMessage());
+			return false;
+		}
+		return super.validateFieldValues(fieldValues);
 	}
 
 	private boolean passwordControlsEnabled() {

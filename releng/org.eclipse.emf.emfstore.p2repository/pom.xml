@@ -5,12 +5,12 @@
     <parent>
         <groupId>org.eclipse.emf.emfstore</groupId>
         <artifactId>emfstore-parent</artifactId>
-        <version>1.9.0-SNAPSHOT</version>
+        <version>1.10.0-SNAPSHOT</version>
         <relativePath>../emfstore-parent/</relativePath>
     </parent>
     <groupId>org.eclipse.emf.emfstore</groupId>
     <artifactId>org.eclipse.emf.emfstore.p2repository</artifactId>
-    <version>1.9.0-SNAPSHOT</version>
+    <version>1.10.0-SNAPSHOT</version>
     <packaging>eclipse-repository</packaging>
     
     <!-- see http://www.codetrails.com/blog/maven-tycho-how-to-configure-your-repos-mirror-and-statistics-uris -->
@@ -32,7 +32,7 @@
                     <finalName>repository</finalName>
                 </configuration>
             </plugin>
-            <plugin>
+            <!--plugin>
                 <groupId>org.eclipse.tycho.extras</groupId>
                 <artifactId>tycho-eclipserun-plugin</artifactId>
                 <executions>
@@ -40,7 +40,7 @@
                         <id>add-repo-properties</id>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin-->
         </plugins>
         <pluginManagement>
             <plugins>

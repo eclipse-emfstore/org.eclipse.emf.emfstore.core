@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?pde version="3.8"?><target name="EMFStore" sequenceNumber="246">
+<locations>
+<location includeAllPlatforms="true" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.emf.compare.rcp.ui.source.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.emf.compare.source.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.emf.compare.ide.ui.source.feature.group" version="0.0.0"/>
+<repository location="http://download.eclipse.org/modeling/emf/compare/updates/releases/3.0/"/>
+</location>
+<location includeAllPlatforms="true" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.emf.edapt.runtime.feature.source.feature.group" version="0.0.0"/>
+<repository location="http://download.eclipse.org/edapt/releases/12x/120"/>
+</location>
+<location includeAllPlatforms="true" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
+<unit id="com.google.guava" version="0.0.0"/>
+<unit id="javax.annotation" version="0.0.0"/>
+<unit id="javax.annotation.source" version="0.0.0"/>
+<unit id="com.google.guava.source" version="0.0.0"/>
+<repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20160520211859/repository/"/>
+</location>
+<location includeAllPlatforms="true" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
+<unit id="org.apache.log4j.source" version="0.0.0"/>
+<unit id="org.eclipse.swtbot.eclipse.test.junit.feature.group" version="0.0.0"/>
+<unit id="org.hamcrest.core" version="0.0.0"/>
+<unit id="org.eclipse.swtbot.forms.feature.group" version="0.0.0"/>
+<unit id="org.apache.log4j" version="0.0.0"/>
+<unit id="org.eclipse.swtbot.eclipse.gef.feature.group" version="0.0.0"/>
+<unit id="org.hamcrest.library.source" version="0.0.0"/>
+<unit id="org.hamcrest.library" version="0.0.0"/>
+<unit id="org.eclipse.swtbot.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.swtbot.eclipse.feature.group" version="0.0.0"/>
+<unit id="org.hamcrest.core.source" version="0.0.0"/>
+<repository location="http://download.eclipse.org/technology/swtbot/releases/latest/"/>
+</location>
+<location includeAllPlatforms="true" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.platform.ide" version="0.0.0"/>
+<unit id="org.eclipse.equinox.sdk.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.sdk.ide" version="0.0.0"/>
+<unit id="org.eclipse.pde.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.platform.sdk" version="0.0.0"/>
+<unit id="org.eclipse.pde.source.feature.group" version="0.0.0"/>
+<repository location="http://download.eclipse.org/eclipse/updates/4.7"/>
+</location>
+<location includeAllPlatforms="true" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.jdt.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.graphiti.export.feature.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.emf.transaction.sdk.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.emf.sdk.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.graphiti.feature.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.emf.cdo.sdk.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.emf.validation.sdk.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.gef.sdk.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.net4j.sdk.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.emf.compare.source.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.emf.compare.ide.ui.source.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.ocl.all.sdk.feature.group" version="0.0.0"/>
+<repository location="http://download.eclipse.org/releases/oxygen/"/>
+</location>
+<location includeAllPlatforms="true" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.jetty.sdk.feature.group" version="0.0.0"/>
+<repository location="http://download.eclipse.org/releases/juno/"/>
+</location>
+<location includeAllPlatforms="true" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipselabs.mongo.emf.feature.feature.group" version="0.0.0"/>
+<unit id="org.eclipselabs.mongo.emf.feature.source.feature.group" version="0.0.0"/>
+<repository location="http://bryanhunt.github.com/mongo-emf/releases/0.7.1"/>
+</location>
+<location includeAllPlatforms="true" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.emf.ecp.sdk.feature.feature.group" version="0.0.0"/>
+<repository location="http://download.eclipse.org/ecp/releases/releases_113/"/>
+</location>
+</locations>
+</target>

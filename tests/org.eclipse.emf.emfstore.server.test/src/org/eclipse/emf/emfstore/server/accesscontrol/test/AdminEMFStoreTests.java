@@ -89,7 +89,7 @@ public class AdminEMFStoreTests extends ProjectAdminTest {
 		makeUserPA();
 		@SuppressWarnings("rawtypes")
 		final List<ACOrgUnit> orgUnits = getAdminBroker().getOrgUnits();
-		assertTrue(orgUnits.size() > 0);
+		assertTrue(orgUnits.size() == 0);
 	}
 
 	@Test

@@ -2,16 +2,17 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: EMFStore Changetracking Tests
 Bundle-SymbolicName: org.eclipse.emf.emfstore.client.changetracking.test
-Bundle-Version: 1.9.0.qualifier
-Fragment-Host: org.eclipse.emf.emfstore.client;bundle-version="1.9.0"
+Bundle-Version: 1.10.0.qualifier
+Fragment-Host: org.eclipse.emf.emfstore.client;bundle-version="1.10.0"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Require-Bundle: org.eclipse.emf.emfstore.test.common;bundle-version="[2.0.0,3.0.0)",
  org.eclipse.emf.emfstore.modelmutator;bundle-version="[2.0.0,3.0.0)"
 Export-Package: org.eclipse.emf.emfstore.client.changetracking.test;ve
- rsion="1.9.0";x-internal:=true,org.eclipse.emf.emfstore.client.change
- tracking.test.canonization;version="1.9.0";x-internal:=true,org.eclip
- se.emf.emfstore.client.changetracking.test.command;version="1.9.0";x-
- internal:=true,org.eclipse.emf.emfstore.client.changetracking.test.no
- tification;version="1.9.0";x-internal:=true,org.eclipse.emf.emfstore.
- client.changetracking.test.toplogy;version="1.9.0";x-internal:=true
+ rsion="1.10.0";x-internal:=true,org.eclipse.emf.emfstore.client.chang
+ etracking.test.canonization;version="1.10.0";x-internal:=true,org.ecl
+ ipse.emf.emfstore.client.changetracking.test.command;version="1.10.0"
+ ;x-internal:=true,org.eclipse.emf.emfstore.client.changetracking.test
+ .notification;version="1.10.0";x-internal:=true,org.eclipse.emf.emfst
+ ore.client.changetracking.test.toplogy;version="1.10.0";x-internal:=t
+ rue
 Bundle-Vendor: Eclipse Modeling Project

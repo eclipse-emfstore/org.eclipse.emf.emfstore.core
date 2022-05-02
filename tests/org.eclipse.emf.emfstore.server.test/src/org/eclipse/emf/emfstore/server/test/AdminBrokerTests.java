@@ -12,11 +12,13 @@
 package org.eclipse.emf.emfstore.server.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.eclipse.emf.emfstore.client.ESUsersession;
 import org.eclipse.emf.emfstore.client.test.common.cases.ESTestWithLoggedInUserMock;
+import org.eclipse.emf.emfstore.client.test.common.dsl.Roles;
 import org.eclipse.emf.emfstore.client.test.common.util.ServerUtil;
 import org.eclipse.emf.emfstore.internal.client.model.AdminBroker;
 import org.eclipse.emf.emfstore.internal.client.model.ESWorkspaceProviderImpl;
@@ -26,6 +28,7 @@ import org.eclipse.emf.emfstore.internal.client.model.impl.api.ESUsersessionImpl
 import org.eclipse.emf.emfstore.internal.server.exceptions.AccessControlException;
 import org.eclipse.emf.emfstore.internal.server.exceptions.ConnectionException;
 import org.eclipse.emf.emfstore.internal.server.exceptions.InvalidInputException;
+import org.eclipse.emf.emfstore.internal.server.model.accesscontrol.ACGroup;
 import org.eclipse.emf.emfstore.internal.server.model.accesscontrol.ACOrgUnitId;
 import org.eclipse.emf.emfstore.internal.server.model.accesscontrol.ACUser;
 import org.eclipse.emf.emfstore.server.exceptions.ESException;
@@ -39,8 +42,11 @@ import org.junit.Test;
  */
 public class AdminBrokerTests extends ESTestWithLoggedInUserMock {
 
+	private static final String SUPER_USER_NAME = "super"; //$NON-NLS-1$
 	private static final String GROUP_NAME = "grp"; //$NON-NLS-1$
+	private static final String GROUP_NAME_2 = "grp2"; //$NON-NLS-1$
 	private static final String USER_NAME = "quux"; //$NON-NLS-1$
+	private static final String USER_NAME_2 = "hoof"; //$NON-NLS-1$
 
 	private static AdminBroker adminBroker;
 
@@ -88,20 +94,59 @@ public class AdminBrokerTests extends ESTestWithLoggedInUserMock {
 		final int initialSize = adminBroker.getUsers().size();
 		adminBroker.createUser(USER_NAME);
 		assertEquals(initialSize + 1, adminBroker.getUsers().size());
+		assertEquals(findUser(SUPER_USER_NAME).getId().getId(), findUser(USER_NAME).getCreatedBy());
 	}
 
 	@Test
 	public void testDeleteUser() throws ESException {
 		adminBroker.createUser(USER_NAME);
 		final int initialSize = adminBroker.getUsers().size();
-		ACUser userToDelete = null;
-		for (final ACUser user : adminBroker.getUsers()) {
-			if (user.getName().equals(USER_NAME)) {
-				userToDelete = user;
-			}
-		}
+		final ACUser userToDelete = findUser(USER_NAME);
 		adminBroker.deleteUser(userToDelete.getId());
 		assertEquals(initialSize - 1, adminBroker.getUsers().size());
+	}
+
+	@Test
+	public void testDeleteUserWithCreatedByUser() throws ESException {
+		/* setup */
+		adminBroker.createUser(USER_NAME);
+		final ACUser createdUser1 = findUser(USER_NAME);
+		adminBroker.assignRole(createdUser1.getId(), Roles.serverAdmin());
+		adminBroker.changeUser(createdUser1.getId(), createdUser1.getName(), createdUser1.getName());
+
+		final ESUsersession login = getServer().login(createdUser1.getName(), createdUser1.getName());
+		final AdminBroker adminBroker2 = new AdminBrokerImpl(
+			((ESServerImpl) getServer()).toInternalAPI(),
+			((ESUsersessionImpl) login).toInternalAPI().getSessionId());
+
+		adminBroker2.createUser(USER_NAME_2);
+		final int initialSize = adminBroker.getUsers().size();
+		assertEquals(createdUser1.getId().getId(), findUser(USER_NAME_2).getCreatedBy());
+
+		/* act */
+		adminBroker2.deleteUser(createdUser1.getId());
+
+		/* assert */
+		assertEquals(initialSize - 1, adminBroker.getUsers().size());
+		assertNull(findUser(USER_NAME_2).getCreatedBy());
+	}
+
+	private ACUser findUser(String name) throws ESException {
+		for (final ACUser user : adminBroker.getUsers()) {
+			if (user.getName().equals(name)) {
+				return user;
+			}
+		}
+		return null;
+	}
+
+	private ACGroup findGroup(String name) throws ESException {
+		for (final ACGroup group : adminBroker.getGroups()) {
+			if (group.getName().equals(name)) {
+				return group;
+			}
+		}
+		return null;
 	}
 
 	@Test(expected = AccessControlException.class)
@@ -138,6 +183,7 @@ public class AdminBrokerTests extends ESTestWithLoggedInUserMock {
 	public void testCreateGroup() throws ESException {
 		adminBroker.createGroup(GROUP_NAME);
 		assertEquals(1, adminBroker.getGroups().size());
+		assertEquals(findUser(SUPER_USER_NAME).getId().getId(), findGroup(GROUP_NAME).getCreatedBy());
 	}
 
 	@Test
@@ -145,6 +191,29 @@ public class AdminBrokerTests extends ESTestWithLoggedInUserMock {
 		final ACOrgUnitId groupId = adminBroker.createGroup(GROUP_NAME);
 		adminBroker.deleteGroup(groupId);
 		assertEquals(0, adminBroker.getGroups().size());
+	}
+
+	@Test
+	public void testDeleteUserWithCreatedByGroup() throws ESException {
+		/* setup */
+		adminBroker.createUser(USER_NAME);
+		final ACUser createdUser1 = findUser(USER_NAME);
+		adminBroker.assignRole(createdUser1.getId(), Roles.serverAdmin());
+		adminBroker.changeUser(createdUser1.getId(), createdUser1.getName(), createdUser1.getName());
+
+		final ESUsersession login = getServer().login(createdUser1.getName(), createdUser1.getName());
+		final AdminBroker adminBroker2 = new AdminBrokerImpl(
+			((ESServerImpl) getServer()).toInternalAPI(),
+			((ESUsersessionImpl) login).toInternalAPI().getSessionId());
+
+		adminBroker2.createGroup(GROUP_NAME_2);
+		assertEquals(createdUser1.getId().getId(), findGroup(GROUP_NAME_2).getCreatedBy());
+
+		/* act */
+		adminBroker2.deleteUser(createdUser1.getId());
+
+		/* assert */
+		assertNull(findGroup(GROUP_NAME_2).getCreatedBy());
 	}
 
 	@Test(expected = InvalidInputException.class)

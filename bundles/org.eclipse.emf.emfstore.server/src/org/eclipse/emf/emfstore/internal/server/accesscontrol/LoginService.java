@@ -8,9 +8,11 @@
  *
  * Contributors:
  * Edgar Mueller - initial API and implementation
+ * Johannes Faltermeier - add delay on multiple failed login attempts for user
  ******************************************************************************/
 package org.eclipse.emf.emfstore.internal.server.accesscontrol;
 
+import java.text.MessageFormat;
 import java.util.List;
 
 import org.eclipse.emf.emfstore.common.extensionpoint.ESExtensionElement;
@@ -35,6 +37,8 @@ import org.eclipse.emf.emfstore.server.model.ESClientVersionInfo;
 import org.eclipse.emf.emfstore.server.model.ESOrgUnitProvider;
 import org.eclipse.emf.emfstore.server.model.ESSessionId;
 
+import com.google.common.base.Optional;
+
 /**
  * Service for logging users out and in. The user verification step is customizable via an extension point.
  *
@@ -46,11 +50,14 @@ public class LoginService {
 	private static final String USER_VERIFIER_SERVICE_CLASS = "userVerifierServiceClass"; //$NON-NLS-1$
 	private static final String MONITOR_NAME = "authentication"; //$NON-NLS-1$
 	private static final String ACCESSCONTROL_EXTENSION_ID = "org.eclipse.emf.emfstore.server.accessControl"; //$NON-NLS-1$
+
 	private final EMFStoreSessions sessions;
 	private final ESOrgUnitResolver orgUnitResolver;
 	private final ESOrgUnitProvider orgUnitProvider;
 	private final ESAuthenticationControlType authenticationControlType;
 	private ESUserVerifier userVerifier;
+	private final VerifyRequestManager verifyRequestManager;
+	private final int delay;
 
 	/**
 	 * Constructor.
@@ -65,17 +72,24 @@ public class LoginService {
 	 *            It's absolutely fine if {@link ESUserVerifier} ignore the provider.
 	 * @param orgUnitResolver
 	 *            an {@link ESOrgUnitResolver} for resolving any roles and groups on a given organizational unit
+	 * @param delay
+	 *            if multiple failed requests have occurred in intervals shorter than this delay, any further requests
+	 *            will be immediately declined until the delay is reached. If <code>-1</code> is passed, this feature
+	 *            will be disabled.
 	 */
 	public LoginService(
 		ESAuthenticationControlType authenticationControlType,
 		EMFStoreSessions sessions,
 		ESOrgUnitProvider orgUnitProvider,
-		ESOrgUnitResolver orgUnitResolver) {
+		ESOrgUnitResolver orgUnitResolver,
+		int delay) {
 
 		this.authenticationControlType = authenticationControlType;
 		this.sessions = sessions;
 		this.orgUnitProvider = orgUnitProvider;
 		this.orgUnitResolver = orgUnitResolver;
+		this.delay = delay;
+		verifyRequestManager = new VerifyRequestManager(delay);
 	}
 
 	private ESUserVerifier initUserVerifierService() {
@@ -122,10 +136,15 @@ public class LoginService {
 		throws AccessControlException {
 
 		synchronized (MonitorProvider.getInstance().getMonitor(MONITOR_NAME)) {
-			final ESAuthenticationInformation authInfo = getUserVerifierService().verifyUser(
-				username,
-				password,
+			final Optional<ESAuthenticationInformation> information = doVerifyUser(username, password,
 				clientVersionInfo);
+			if (!information.isPresent()) {
+				throw new AccessControlException(
+					MessageFormat.format(Messages.LoginService_VerifyUserTooManyFailedRequests, username, delay));
+			}
+
+			final ESAuthenticationInformation authInfo = information.get();
+
 			final AuthenticationInformation authenticationInformation = ESAuthenticationInformationImpl.class.cast(
 				authInfo).toInternalAPI();
 
@@ -183,16 +202,42 @@ public class LoginService {
 	 */
 	public boolean verifyUser(String username, String password, ESClientVersionInfo clientVersionInfo) {
 		try {
-			getUserVerifierService().verifyUser(
+			final Optional<ESAuthenticationInformation> information = doVerifyUser(username, password,
+				clientVersionInfo);
+			if (!information.isPresent()) {
+				/* too many bad attempts, otherwise we get an exception */
+				ModelUtil.logWarning(
+					MessageFormat.format(Messages.LoginService_VerifyUserTooManyFailedRequests, username, delay));
+				return false;
+			}
+			return true;
+		} catch (final AccessControlException ex) {
+			/* regular bad attempt */
+			return false;
+		}
+	}
+
+	/**
+	 * @return if the information is absent, the verify request was not attempted, because there are too many failed
+	 *         requests recorded.
+	 * @throws in case of a failed attempt
+	 */
+	private Optional<ESAuthenticationInformation> doVerifyUser(String username, String password,
+		ESClientVersionInfo clientVersionInfo) throws AccessControlException {
+		try {
+			if (verifyRequestManager.checkTooManyFailedRequests(username)) {
+				return Optional.absent();
+			}
+			final ESAuthenticationInformation information = getUserVerifierService().verifyUser(
 				username,
 				password,
 				clientVersionInfo);
-			return true;
+			verifyRequestManager.cleanupFailedAttempts(username);
+			return Optional.of(information);
 		} catch (final AccessControlException e) {
-			// ignore
+			verifyRequestManager.recordFailedVerifyUserAttempt(username);
+			throw e;
 		}
-
-		return false;
 	}
 
 }

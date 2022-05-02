@@ -2,11 +2,11 @@
 <feature
       id="org.eclipse.emf.emfstore.client.feature"
       label="EMFStore Client"
-      version="1.9.0.qualifier"
+      version="1.10.0.qualifier"
       provider-name="Eclipse Modeling Project"
       plugin="org.eclipse.emf.emfstore.client"
       license-feature="org.eclipse.emf.emfstore.license.feature"
-      license-feature-version="1.9.0.qualifier">
+      license-feature-version="1.10.0.qualifier">
 
    <description url="http://emfstore.org">
       This feature contains all plugins to contact the EMFStore server from a client application.

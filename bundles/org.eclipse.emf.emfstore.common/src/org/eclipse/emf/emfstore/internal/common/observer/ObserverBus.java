@@ -94,12 +94,14 @@ public class ObserverBus {
 
 	private static final String EXTENSION_POINT_ID = "org.eclipse.emf.emfstore.common.observerBusExtensionPointRegistration"; //$NON-NLS-1$
 	private final transient Map<Class<? extends ESObserver>, List<ESObserver>> observerMap;
+	private final Set<ObserverExceptionListener> exceptionListeners;
 
 	/**
 	 * Default constructor.
 	 */
 	public ObserverBus() {
 		observerMap = new LinkedHashMap<Class<? extends ESObserver>, List<ESObserver>>();
+		exceptionListeners = new LinkedHashSet<ObserverExceptionListener>();
 		collectionExtensionPoints();
 	}
 
@@ -176,6 +178,25 @@ public class ObserverBus {
 		}
 	}
 
+	/**
+	 * Registers the given listener as an exception observer. Has no effect if this listener was already registered.
+	 *
+	 * @param listener the {@link ObserverExceptionListener}
+	 */
+	public void registerExceptionListener(ObserverExceptionListener listener) {
+		exceptionListeners.add(listener);
+	}
+
+	/**
+	 * Unregisters the given listener from the exception observers. Has no effect if this listener was not registered
+	 * before.
+	 *
+	 * @param listener the {@link ObserverExceptionListener}
+	 */
+	public void unregisterExceptionListener(ObserverExceptionListener listener) {
+		exceptionListeners.remove(listener);
+	}
+
 	private void addObserver(ESObserver observer, final Class<? extends ESObserver> iface) {
 		final List<ESObserver> observers = initObserverList(iface);
 		observers.add(observer);
@@ -209,10 +230,13 @@ public class ObserverBus {
 		return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class[] { clazz, ObserverCall.class }, handler);
 	}
 
-	private static void logExceptions(List<Result> results) {
+	private void logExceptions(List<Result> results) {
 		for (final Result result : results) {
 			final Throwable throwable = result.getException();
 			if (throwable != null) {
+				for (final ObserverExceptionListener listener : exceptionListeners) {
+					listener.onException(result.getObserver(), throwable);
+				}
 				Activator.getDefault().getLog().log(
 					new Status(
 						IStatus.ERROR, "org.eclipse.emf.emfstore.common", //$NON-NLS-1$

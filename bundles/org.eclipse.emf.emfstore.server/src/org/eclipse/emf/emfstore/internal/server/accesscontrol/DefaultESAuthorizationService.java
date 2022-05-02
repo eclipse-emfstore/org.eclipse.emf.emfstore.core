@@ -22,21 +22,17 @@ import java.util.Set;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.emfstore.internal.common.APIUtil;
 import org.eclipse.emf.emfstore.internal.server.ServerConfiguration;
-import org.eclipse.emf.emfstore.internal.server.core.MonitorProvider;
+import org.eclipse.emf.emfstore.internal.server.core.helper.ACHelper;
 import org.eclipse.emf.emfstore.internal.server.exceptions.AccessControlException;
 import org.eclipse.emf.emfstore.internal.server.exceptions.SessionTimedOutException;
 import org.eclipse.emf.emfstore.internal.server.model.ProjectHistory;
 import org.eclipse.emf.emfstore.internal.server.model.ProjectId;
-import org.eclipse.emf.emfstore.internal.server.model.accesscontrol.ACGroup;
 import org.eclipse.emf.emfstore.internal.server.model.accesscontrol.ACOrgUnit;
-import org.eclipse.emf.emfstore.internal.server.model.accesscontrol.ACOrgUnitId;
 import org.eclipse.emf.emfstore.internal.server.model.accesscontrol.ACUser;
 import org.eclipse.emf.emfstore.internal.server.model.accesscontrol.roles.ProjectAdminRole;
 import org.eclipse.emf.emfstore.internal.server.model.accesscontrol.roles.Role;
 import org.eclipse.emf.emfstore.internal.server.model.accesscontrol.roles.ServerAdmin;
-import org.eclipse.emf.emfstore.internal.server.model.impl.api.ESGroupImpl;
 import org.eclipse.emf.emfstore.internal.server.model.impl.api.ESProjectHistoryImpl;
-import org.eclipse.emf.emfstore.internal.server.model.impl.api.ESUserImpl;
 import org.eclipse.emf.emfstore.server.auth.ESAuthorizationService;
 import org.eclipse.emf.emfstore.server.auth.ESMethod.MethodId;
 import org.eclipse.emf.emfstore.server.auth.ESMethodInvocation;
@@ -44,15 +40,12 @@ import org.eclipse.emf.emfstore.server.auth.ESOrgUnitResolver;
 import org.eclipse.emf.emfstore.server.auth.ESProjectAdminPrivileges;
 import org.eclipse.emf.emfstore.server.auth.ESSessions;
 import org.eclipse.emf.emfstore.server.model.ESGlobalProjectId;
-import org.eclipse.emf.emfstore.server.model.ESGroup;
-import org.eclipse.emf.emfstore.server.model.ESOrgUnit;
 import org.eclipse.emf.emfstore.server.model.ESOrgUnitId;
 import org.eclipse.emf.emfstore.server.model.ESOrgUnitProvider;
 import org.eclipse.emf.emfstore.server.model.ESProjectHistory;
 import org.eclipse.emf.emfstore.server.model.ESSessionId;
-import org.eclipse.emf.emfstore.server.model.ESUser;
 
-import com.google.common.base.Preconditions;
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
@@ -103,6 +96,7 @@ public class DefaultESAuthorizationService implements ESAuthorizationService {
 			MethodId.UPLOADFILECHUNK,
 			MethodId.CREATEVERSION,
 			MethodId.UPLOADCHANGEPACKAGEFRAGMENT,
+			MethodId.DELETEFILE,
 			MethodId.GETBRANCHES);
 
 		addAccessMapping(AccessLevel.PROJECT_ADMIN,
@@ -252,7 +246,7 @@ public class DefaultESAuthorizationService implements ESAuthorizationService {
 	 */
 	public boolean checkProjectAdminAccessForOrgUnit(ESSessionId sessionId, ESOrgUnitId orgUnitId,
 		Set<ESGlobalProjectId> projectIds)
-			throws AccessControlException {
+		throws AccessControlException {
 
 		checkSession(sessionId);
 		cleanupPARole(orgUnitId);
@@ -556,38 +550,20 @@ public class DefaultESAuthorizationService implements ESAuthorizationService {
 	}
 
 	private List<Role> getAllRoles(ESOrgUnitId orgUnitId) throws AccessControlException {
-
-		final ACOrgUnit<?> internalOrgUnit = getOrgUnit(orgUnitId);
-		final ESOrgUnit orgUnit = internalOrgUnit.toAPI();
-		final List<ACGroup> groups = APIUtil.toInternal(orgUnitResolver.getGroups(orgUnit));
-		final ArrayList<Role> roles = new ArrayList<Role>();
-		for (final ACGroup group : groups) {
-			roles.addAll(group.getRoles());
-		}
-		roles.addAll(internalOrgUnit.getRoles());
-		return roles;
+		return ACHelper.getAllRoles(orgUnitResolver, getOrgUnit(orgUnitId));
 	}
 
-	private ACOrgUnit<?> getOrgUnit(ESOrgUnitId orgUnitId) throws AccessControlException {
-
-		Preconditions.checkNotNull(orgUnitId, "orgUnitId must not be null"); //$NON-NLS-1$
-		final ACOrgUnitId internalId = APIUtil.toInternal(ACOrgUnitId.class, orgUnitId);
-
-		synchronized (MonitorProvider.getInstance().getMonitor()) {
-			for (final ESUser user : orgUnitProvider.getUsers()) {
-				final ACUser internalAPI = (ACUser) ESUserImpl.class.cast(user).toInternalAPI();
-				if (internalAPI.getId().equals(internalId)) {
-					return internalAPI;
-				}
-			}
-			for (final ESGroup group : orgUnitProvider.getGroups()) {
-				final ACGroup internalAPI = (ACGroup) ESGroupImpl.class.cast(group).toInternalAPI();
-				if (internalAPI.getId().equals(internalId)) {
-					return internalAPI;
-				}
-			}
+	/**
+	 * @param orgUnitId the id of the org unit to get
+	 * @return the {@link ACOrgUnit}
+	 * @throws AccessControlException in case no unit with that id was found
+	 */
+	protected ACOrgUnit<?> getOrgUnit(ESOrgUnitId orgUnitId) throws AccessControlException {
+		final Optional<ACOrgUnit<?>> orgUnit = ACHelper.getOrgUnit(orgUnitProvider, orgUnitId);
+		if (!orgUnit.isPresent()) {
 			throw new AccessControlException(Messages.AccessControlImpl_Given_OrgUnit_Does_Not_Exist);
 		}
+		return orgUnit.get();
 	}
 
 	/**
@@ -603,7 +579,11 @@ public class DefaultESAuthorizationService implements ESAuthorizationService {
 		this.orgUnitProvider = orgUnitProvider;
 	}
 
-	private void checkSession(ESSessionId sessionId) throws SessionTimedOutException {
+	/**
+	 * @param sessionId the {@link ESSessionId} to check
+	 * @throws SessionTimedOutException in case the session is not valid anymore
+	 */
+	protected void checkSession(ESSessionId sessionId) throws SessionTimedOutException {
 		sessions.isValid(sessionId);
 	}
 }

@@ -18,6 +18,7 @@ import org.apache.commons.lang.StringUtils;
 import org.eclipse.emf.emfstore.client.ESUsersession;
 import org.eclipse.emf.emfstore.client.sessionprovider.ESAbstractSessionProvider;
 import org.eclipse.emf.emfstore.client.util.RunESCommand;
+import org.eclipse.emf.emfstore.common.extensionpoint.ESExtensionElement;
 import org.eclipse.emf.emfstore.common.extensionpoint.ESExtensionPoint;
 import org.eclipse.emf.emfstore.internal.client.model.ESWorkspaceProviderImpl;
 import org.eclipse.emf.emfstore.internal.client.model.Usersession;
@@ -38,6 +39,7 @@ import org.eclipse.emf.emfstore.server.exceptions.ESException;
 public class SessionManager {
 
 	private static final String CLASS = "class"; //$NON-NLS-1$
+	private static final String PRIORITY = "priority"; //$NON-NLS-1$
 	private static final String ORG_ECLIPSE_EMF_EMFSTORE_CLIENT_USERSESSION_PROVIDER = "org.eclipse.emf.emfstore.client.usersessionProvider"; //$NON-NLS-1$
 	private static final String USERSESSION_MUST_NOT_BE_NULL = "Usersession must not be null."; //$NON-NLS-1$
 	private ESAbstractSessionProvider provider;
@@ -182,7 +184,8 @@ public class SessionManager {
 			ORG_ECLIPSE_EMF_EMFSTORE_CLIENT_USERSESSION_PROVIDER);
 
 		if (extensionPoint.getExtensionElements().size() > 0) {
-			final ESAbstractSessionProvider sessionProvider = extensionPoint.getFirst().getClass(CLASS,
+			final ESExtensionElement highestExtension = analyseUsersessionExtensionPoint(extensionPoint);
+			final ESAbstractSessionProvider sessionProvider = highestExtension.getClass(CLASS,
 				ESAbstractSessionProvider.class);
 			if (sessionProvider != null) {
 				provider = sessionProvider;
@@ -190,5 +193,27 @@ public class SessionManager {
 		} else {
 			provider = new BasicSessionProvider();
 		}
+	}
+
+	/**
+	 * Parses the given extension point and returns the highest ranked extension element.
+	 *
+	 * @param extensionPoint the extension point
+	 * @return the element or <code>null</code> if no extension elements.
+	 */
+	public static ESExtensionElement analyseUsersessionExtensionPoint(final ESExtensionPoint extensionPoint) {
+		int highestPrio = -1;
+		ESExtensionElement highestExtension = null;
+		for (final ESExtensionElement esExtensionElement : extensionPoint.getExtensionElements()) {
+			Integer prio = esExtensionElement.getInteger(PRIORITY);
+			if (prio == null) {
+				prio = 0;
+			}
+			if (prio > highestPrio) {
+				highestPrio = prio;
+				highestExtension = esExtensionElement;
+			}
+		}
+		return highestExtension;
 	}
 }

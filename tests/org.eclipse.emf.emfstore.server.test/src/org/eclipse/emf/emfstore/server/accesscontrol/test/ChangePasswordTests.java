@@ -212,4 +212,22 @@ public class ChangePasswordTests extends ProjectAdminTest {
 		final String salt = userPass.substring(separatorIndex + 1);
 		assertTrue(AccessControl.getESPasswordHashGenerator().verifyPassword(NEW_USER_PASSWORD, hash, salt));
 	}
+
+	@Test /* do not expect exception on annotation */
+	public void samePasswordForUser() throws ESException {
+		/* setup */
+		makeUserPA();
+		final ACOrgUnitId createUser = ServerUtil.createUser(getSuperUsersession(), getNewUsername());
+		ProjectUtil.share(getUsersession(), getLocalProject());
+		getAdminBroker().changeRole(getProjectSpace().getProjectId(), createUser, Roles.writer());
+		ServerUtil.changePassword(getUsersession(), createUser, getNewUsername(), getPassword());
+
+		try {
+			/* act */
+			ServerUtil.changePassword(getUsersession(), createUser, getNewUsername(), getPassword());
+		} catch (final ESException ex) {
+			/* assert */
+			assertEquals("Same password provided as existing.", ex.getMessage()); //$NON-NLS-1$
+		}
+	}
 }

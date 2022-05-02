@@ -13,6 +13,7 @@ package org.eclipse.emf.emfstore.internal.client.test;
 
 import org.eclipse.emf.emfstore.internal.client.test.caching.AllCachingTests;
 import org.eclipse.emf.emfstore.internal.client.test.common.AllCommonTests;
+import org.eclipse.emf.emfstore.internal.client.test.connectionmanager.SessionManagerTest;
 import org.eclipse.emf.emfstore.internal.client.test.persistence.AllPersistenceTests;
 import org.eclipse.emf.emfstore.internal.client.test.workspace.AllWorkspaceTests;
 import org.junit.runner.RunWith;
@@ -28,7 +29,8 @@ import org.junit.runners.Suite;
 	AllCachingTests.class,
 	AllCommonTests.class,
 	AllPersistenceTests.class,
-	AllWorkspaceTests.class
+	AllWorkspaceTests.class,
+	SessionManagerTest.class
 })
 public class AllTests {
 

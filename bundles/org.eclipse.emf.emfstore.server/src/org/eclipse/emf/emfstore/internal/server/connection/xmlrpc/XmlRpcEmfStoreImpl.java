@@ -28,6 +28,7 @@ import org.eclipse.emf.emfstore.internal.server.filetransfer.FileChunk;
 import org.eclipse.emf.emfstore.internal.server.filetransfer.FileTransferInformation;
 import org.eclipse.emf.emfstore.internal.server.model.AuthenticationInformation;
 import org.eclipse.emf.emfstore.internal.server.model.ClientVersionInfo;
+import org.eclipse.emf.emfstore.internal.server.model.FileIdentifier;
 import org.eclipse.emf.emfstore.internal.server.model.ProjectHistory;
 import org.eclipse.emf.emfstore.internal.server.model.ProjectId;
 import org.eclipse.emf.emfstore.internal.server.model.ProjectInfo;
@@ -153,7 +154,7 @@ public class XmlRpcEmfStoreImpl implements EMFStore {
 	 */
 	public FileChunk downloadFileChunk(SessionId sessionId, ProjectId projectId,
 		FileTransferInformation fileInformation)
-			throws ESException {
+		throws ESException {
 		try {
 			return getEmfStore().downloadFileChunk(sessionId, projectId, fileInformation);
 		} catch (final FileNotOnServerException ex) {
@@ -308,16 +309,27 @@ public class XmlRpcEmfStoreImpl implements EMFStore {
 	}
 
 	/**
-	 * 
+	 *
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @see org.eclipse.emf.emfstore.internal.server.EMFStore#downloadChangePackageFragment(org.eclipse.emf.emfstore.internal.server.model.SessionId,
 	 *      org.eclipse.emf.emfstore.internal.server.model.ProjectId, java.lang.String, int)
 	 */
 	public ChangePackageEnvelope downloadChangePackageFragment(SessionId sessionId, ProjectId projectId, String proxyId,
 		int fragmentIndex)
-			throws ESException {
+		throws ESException {
 		return getEmfStore().downloadChangePackageFragment(sessionId, projectId, proxyId, fragmentIndex);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.eclipse.emf.emfstore.internal.server.EMFStore#deleteFile(org.eclipse.emf.emfstore.internal.server.model.SessionId,
+	 *      org.eclipse.emf.emfstore.internal.server.model.ProjectId,
+	 *      org.eclipse.emf.emfstore.internal.server.model.FileIdentifier)
+	 */
+	public void deleteFile(SessionId sessionId, ProjectId projectId, FileIdentifier fileIdentifier) throws ESException {
+		getEmfStore().deleteFile(sessionId, projectId, fileIdentifier);
 	}
 
 }

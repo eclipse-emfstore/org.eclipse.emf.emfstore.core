@@ -20,6 +20,7 @@ import org.eclipse.emf.emfstore.internal.common.model.Project;
 import org.eclipse.emf.emfstore.internal.server.exceptions.InvalidVersionSpecException;
 import org.eclipse.emf.emfstore.internal.server.filetransfer.FileChunk;
 import org.eclipse.emf.emfstore.internal.server.filetransfer.FileTransferInformation;
+import org.eclipse.emf.emfstore.internal.server.model.FileIdentifier;
 import org.eclipse.emf.emfstore.internal.server.model.ProjectHistory;
 import org.eclipse.emf.emfstore.internal.server.model.ProjectId;
 import org.eclipse.emf.emfstore.internal.server.model.ProjectInfo;
@@ -157,7 +158,7 @@ public interface EMFStore extends EMFStoreInterface {
 	 */
 	ChangePackageEnvelope downloadChangePackageFragment(SessionId sessionId, ProjectId projectId, String proxyId,
 		int fragmentIndex)
-			throws ESException;
+		throws ESException;
 
 	/**
 	 * Resolve a version specified to a primary version specifier.
@@ -195,7 +196,7 @@ public interface EMFStore extends EMFStoreInterface {
 	 */
 	List<AbstractChangePackage> getChanges(SessionId sessionId, ProjectId projectId, VersionSpec source,
 		VersionSpec target)
-			throws ESException;
+		throws ESException;
 
 	/**
 	 * Lista all branches of the given project.
@@ -394,6 +395,17 @@ public interface EMFStore extends EMFStoreInterface {
 	 *             if any error occurs in the EmfStore
 	 */
 	FileChunk downloadFileChunk(SessionId sessionId, ProjectId projectId, FileTransferInformation fileInformation)
+		throws ESException;
+
+	/**
+	 * Delete a file from the server
+	 *
+	 * @param sessionId the ID of the current session
+	 * @param projectId the ID of the project associated with the file
+	 * @param fileIdentifier the ID of the file to be deleted
+	 * @throws ESException in case any error occurs while deleting the file
+	 */
+	void deleteFile(SessionId sessionId, ProjectId projectId, FileIdentifier fileIdentifier)
 		throws ESException;
 
 	/**

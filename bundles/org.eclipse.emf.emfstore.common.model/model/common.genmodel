@@ -9,8 +9,8 @@
     editPluginID="org.eclipse.emf.emfstore.common.model.edit" editorPluginID="org.eclipse.emf.emfstore.internal.common.model.editor"
     runtimeVersion="2.5" language="">
   <foreignModel>common.ecore</foreignModel>
-  <genPackages prefix="Model" basePackage="org.eclipse.emf.emfstore.common" disposableProviderFactory="true"
-      ecorePackage="common.ecore#/">
+  <genPackages prefix="Model" basePackage="org.eclipse.emf.emfstore.internal.common"
+      disposableProviderFactory="true" ecorePackage="common.ecore#/">
     <genEnums typeSafeEnumCompatible="false" ecoreEnum="common.ecore#//EMFStorePropertyType">
       <genEnumLiterals ecoreEnumLiteral="common.ecore#//EMFStorePropertyType/Shared"/>
       <genEnumLiterals ecoreEnumLiteral="common.ecore#//EMFStorePropertyType/Local"/>

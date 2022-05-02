@@ -59,6 +59,7 @@ public class ACOrgUnitItemProvider extends IdentifiableElementItemProvider {
 			addNamePropertyDescriptor(object);
 			addRolesPropertyDescriptor(object);
 			addDescriptionPropertyDescriptor(object);
+			addCreatedByPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -106,6 +107,23 @@ public class ACOrgUnitItemProvider extends IdentifiableElementItemProvider {
 				getString("_UI_PropertyDescriptor_description", "_UI_ACOrgUnit_description_feature", //$NON-NLS-1$ //$NON-NLS-2$
 					"_UI_ACOrgUnit_type"), //$NON-NLS-1$
 				AccesscontrolPackage.Literals.AC_ORG_UNIT__DESCRIPTION, true, false, false,
+				ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null));
+	}
+
+	/**
+	 * This adds a property descriptor for the Created By feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 *
+	 * @generated
+	 */
+	protected void addCreatedByPropertyDescriptor(Object object) {
+		itemPropertyDescriptors
+			.add(createItemPropertyDescriptor(((ComposeableAdapterFactory) adapterFactory).getRootAdapterFactory(),
+				getResourceLocator(), getString("_UI_ACOrgUnit_createdBy_feature"), //$NON-NLS-1$
+				getString("_UI_PropertyDescriptor_description", "_UI_ACOrgUnit_createdBy_feature", //$NON-NLS-1$ //$NON-NLS-2$
+					"_UI_ACOrgUnit_type"), //$NON-NLS-1$
+				AccesscontrolPackage.Literals.AC_ORG_UNIT__CREATED_BY, true, false, false,
 				ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null));
 	}
 
@@ -179,6 +197,7 @@ public class ACOrgUnitItemProvider extends IdentifiableElementItemProvider {
 		switch (notification.getFeatureID(ACOrgUnit.class)) {
 		case AccesscontrolPackage.AC_ORG_UNIT__NAME:
 		case AccesscontrolPackage.AC_ORG_UNIT__DESCRIPTION:
+		case AccesscontrolPackage.AC_ORG_UNIT__CREATED_BY:
 			fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 			return;
 		case AccesscontrolPackage.AC_ORG_UNIT__PROPERTIES:

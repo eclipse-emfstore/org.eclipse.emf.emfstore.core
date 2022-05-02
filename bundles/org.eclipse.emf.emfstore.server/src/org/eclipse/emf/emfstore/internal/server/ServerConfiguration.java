@@ -318,6 +318,17 @@ public final class ServerConfiguration {
 	 */
 	public static final String PROJECT_ADMIN_PRIVILEGES_KEY = "emfstore.accesscontrol.projectadmin"; //$NON-NLS-1$
 
+	/**
+	 * Property key for enabling the immediate rejection of further verify user attempts for a given user, if there have
+	 * been multiple failed attempts in shorter periods than the given delay time. The delay is specified in ms.
+	 */
+	public static final String AUTHENTICATION_LOGIN_DELAY_FAILED_REQUESTS = "emfstore.accesscontrol.authentication.delay"; //$NON-NLS-1$
+
+	/**
+	 * Default value for {@link #AUTHENTICATION_LOGIN_DELAY_FAILED_REQUESTS_DEFAULT} of 1s.
+	 */
+	public static final String AUTHENTICATION_LOGIN_DELAY_FAILED_REQUESTS_DEFAULT = "1000"; //$NON-NLS-1$
+
 	private static boolean testing;
 
 	private static Properties properties;

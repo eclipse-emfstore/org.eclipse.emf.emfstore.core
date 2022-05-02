@@ -98,6 +98,7 @@ public final class Messages extends NLS {
 	public static String UserTabContent_Enter_New_Password;
 	public static String UserTabContent_Enter_New_Password_For_User;
 	public static String UserTabContent_Insufficient_Access_Rights;
+	public static String UserTabContent_InvalidPassword;
 	public static String UserTabContent_Not_Allowed_To_Change_Password;
 	public static String UserTabContent_Not_Allowed_To_Delete_User;
 	public static String UserTabContent_Not_Allowed_To_List_Users;

@@ -158,6 +158,9 @@ public class HistoryBrowserView extends ViewPart implements ProjectSpaceContaine
 
 	private String filteredTag;
 
+	// installed listeners/observers
+	private DeleteProjectSpaceObserver deleteProjectSpaceObserver;
+
 	// changes can be transferred with historyInfos. However, this must be avoided if the server sends
 	// FileBasedChangePackages which the client can not open
 	private final static Boolean isLazyLoadingChanges;
@@ -514,6 +517,9 @@ public class HistoryBrowserView extends ViewPart implements ProjectSpaceContaine
 	 * @param input eobject in projectspace or projectspace itself
 	 */
 	public void setInput(EObject input) {
+		if (viewer.getControl().isDisposed()) {
+			return;
+		}
 		try {
 			if (input instanceof ProjectSpace) {
 				projectSpace = (ProjectSpace) input;
@@ -598,17 +604,21 @@ public class HistoryBrowserView extends ViewPart implements ProjectSpaceContaine
 	}
 
 	private void initProjectDeleteListener() {
-		ESWorkspaceProviderImpl.getObserverBus().register(new DeleteProjectSpaceObserver() {
+		deleteProjectSpaceObserver = new DeleteProjectSpaceObserver() {
 			public void projectSpaceDeleted(ProjectSpace projectSpace) {
 				if (HistoryBrowserView.this.projectSpace == projectSpace) {
 					setInput((EObject) null);
 				}
 			}
-		});
+		};
+		ESWorkspaceProviderImpl.getObserverBus().register(deleteProjectSpaceObserver);
 	}
 
 	@Override
 	public void dispose() {
+		if (deleteProjectSpaceObserver != null) {
+			ESWorkspaceProviderImpl.getObserverBus().unregister(deleteProjectSpaceObserver);
+		}
 		adapterFactoryLabelProvider.dispose();
 		changeLabel.dispose();
 		commitLabel.dispose();
@@ -956,14 +966,14 @@ public class HistoryBrowserView extends ViewPart implements ProjectSpaceContaine
 
 			if (element instanceof CompositeOperation) {
 				selectedModelElement = handleCompositeOperation((CompositeOperation) element);
-			} else if (element instanceof AbstractOperation) {
+			} else if (projectSpace != null && element instanceof AbstractOperation) {
 				selectedModelElement = handleAbstractOperation((AbstractOperation) element);
 			} else if (element instanceof ProjectSpace) {
 				selectedModelElement = ((ProjectSpace) element).getProject();
-			} else if (element instanceof ModelElementId
+			} else if (projectSpace != null && element instanceof ModelElementId
 				&& projectSpace.getProject().contains((ModelElementId) element)) {
 				selectedModelElement = projectSpace.getProject().getModelElement((ModelElementId) element);
-			} else if (projectSpace.getProject().contains((EObject) element)) {
+			} else if (projectSpace != null && projectSpace.getProject().contains((EObject) element)) {
 				selectedModelElement = (EObject) element;
 			}
 
@@ -976,7 +986,7 @@ public class HistoryBrowserView extends ViewPart implements ProjectSpaceContaine
 
 		private EObject handleCompositeOperation(CompositeOperation op) {
 			final AbstractOperation mainOperation = op.getMainOperation();
-			if (mainOperation != null) {
+			if (projectSpace != null && mainOperation != null) {
 				final ModelElementId modelElementId = mainOperation.getModelElementId();
 				final EObject modelElement = projectSpace.getProject().getModelElement(modelElementId);
 				return modelElement;

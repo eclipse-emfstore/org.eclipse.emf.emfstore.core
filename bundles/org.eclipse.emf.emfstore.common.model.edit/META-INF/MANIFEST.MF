@@ -2,17 +2,17 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: EMFStore Common Model Edit
 Bundle-SymbolicName: org.eclipse.emf.emfstore.common.model.edit;singleton:=true
-Bundle-Version: 1.9.0.qualifier
+Bundle-Version: 1.10.0.qualifier
 Bundle-ClassPath: .
 Bundle-Activator: org.eclipse.emf.emfstore.internal.common.model.provider.CommonEditPlugin$Implementation
 Bundle-Vendor: Eclipse Modeling Project
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: org.eclipse.emf.emfstore.internal.common.model.provide
- r;version="1.9.0";x-friends:="org.eclipse.emf.emfstore.server.model.e
- dit,org.eclipse.emf.emfstore.client.model.edit,org.eclipse.emf.emfsto
- re.client.test"
+ r;version="1.10.0";x-friends:="org.eclipse.emf.emfstore.server.model.
+ edit,org.eclipse.emf.emfstore.client.model.edit,org.eclipse.emf.emfst
+ ore.client.test"
 Require-Bundle: org.eclipse.emf.edit;bundle-version="[2.5.0,3.0.0)",
- org.eclipse.emf.emfstore.common.model;bundle-version="[1.9.0,2.0.0)";visibility:=reexport,
+ org.eclipse.emf.emfstore.common.model;bundle-version="[1.10.0,2.0.0)";visibility:=reexport,
  org.eclipse.core.runtime;bundle-version="[3.5.0,4.0.0)"
 Bundle-ActivationPolicy: lazy

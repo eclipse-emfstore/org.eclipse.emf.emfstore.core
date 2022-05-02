@@ -18,6 +18,7 @@ import org.eclipse.emf.emfstore.common.extensionpoint.ESExtensionPoint;
 import org.eclipse.emf.emfstore.common.extensionpoint.ESExtensionPointException;
 import org.eclipse.emf.emfstore.internal.common.model.util.ModelUtil;
 import org.eclipse.emf.emfstore.internal.server.ServerConfiguration;
+import org.eclipse.emf.emfstore.internal.server.exceptions.FatalESException;
 import org.eclipse.emf.emfstore.internal.server.impl.api.ESOrgUnitProviderImpl;
 import org.eclipse.emf.emfstore.internal.server.model.ServerSpace;
 import org.eclipse.emf.emfstore.internal.server.model.impl.api.ESOrgUnitRepositoryImpl;
@@ -66,8 +67,10 @@ public class AccessControl {
 	 *
 	 * @param serverSpace
 	 *            the server space
+	 * @throws FatalESException
+	 *             in case invalid configuration is provided
 	 */
-	public AccessControl(ServerSpace serverSpace) {
+	public AccessControl(ServerSpace serverSpace) throws FatalESException {
 		this.serverSpace = serverSpace;
 		sessions = new EMFStoreSessions();
 
@@ -84,10 +87,12 @@ public class AccessControl {
 	 *            the type of the login service to be used
 	 * @param serverSpace
 	 *            the server space
+	 * @throws FatalESException
+	 *             in case invalid configuration is provided
 	 */
 	public AccessControl(
 		ESAuthenticationControlType authenticationControlType,
-		ServerSpace serverSpace) {
+		ServerSpace serverSpace) throws FatalESException {
 
 		this.authenticationControlType = authenticationControlType;
 		this.serverSpace = serverSpace;
@@ -131,21 +136,29 @@ public class AccessControl {
 		return passwordHashGenerator;
 	}
 
-	/**
-	 * @return
-	 */
-	private LoginService initLoginService() {
+	private LoginService initLoginService() throws FatalESException {
 
 		if (authenticationControlType == null) {
 			final String[] splittedProperty = ServerConfiguration
 				.getSplittedProperty(ServerConfiguration.AUTHENTICATION_POLICY);
 			authenticationControlType = ESAuthenticationControlType.valueOf(splittedProperty[0]);
 		}
+		final String delayString = ServerConfiguration.getProperties().getProperty(
+			ServerConfiguration.AUTHENTICATION_LOGIN_DELAY_FAILED_REQUESTS,
+			ServerConfiguration.AUTHENTICATION_LOGIN_DELAY_FAILED_REQUESTS_DEFAULT);
+		int delay;
+		try {
+			delay = Integer.valueOf(delayString);
+		} catch (final NumberFormatException ex) {
+			throw new FatalESException(MessageFormat.format(Messages.AccessControl_IllegalDelayValueInProperties,
+				ServerConfiguration.AUTHENTICATION_LOGIN_DELAY_FAILED_REQUESTS), ex);
+		}
 		return new LoginService(
 			authenticationControlType,
 			sessions,
 			orgUnitProvider,
-			getOrgUnitResolverServive());
+			getOrgUnitResolverServive(),
+			delay);
 	}
 
 	/**

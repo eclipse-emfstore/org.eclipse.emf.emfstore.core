@@ -2,11 +2,11 @@
 <feature
       id="org.eclipse.emf.emfstore.client.ui.rap.feature"
       label="EMFStore Client UI RAP"
-      version="1.9.0.qualifier"
+      version="1.10.0.qualifier"
       provider-name="Eclipse Modeling Project"
       plugin="org.eclipse.emf.emfstore.client.ui"
       license-feature="org.eclipse.emf.emfstore.license.feature"
-      license-feature-version="1.9.0.qualifier">
+      license-feature-version="1.10.0.qualifier">
 
    <description url="http://emfstore.org">
       This feature contains all plugins to provide user interfaces

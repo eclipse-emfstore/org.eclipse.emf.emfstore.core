@@ -26,14 +26,16 @@ import org.eclipse.emf.emfstore.server.model.ESOrgUnit;
  *          The following features are supported:
  *          </p>
  *          <ul>
- *          <li>{@link org.eclipse.emf.emfstore.internal.server.model.accesscontrol.ACOrgUnit#getName <em>Name</em>}
- *          </li>
- *          <li>{@link org.eclipse.emf.emfstore.internal.server.model.accesscontrol.ACOrgUnit#getRoles <em>Roles</em>}
- *          </li>
+ *          <li>{@link org.eclipse.emf.emfstore.internal.server.model.accesscontrol.ACOrgUnit#getName
+ *          <em>Name</em>}</li>
+ *          <li>{@link org.eclipse.emf.emfstore.internal.server.model.accesscontrol.ACOrgUnit#getRoles
+ *          <em>Roles</em>}</li>
  *          <li>{@link org.eclipse.emf.emfstore.internal.server.model.accesscontrol.ACOrgUnit#getDescription
  *          <em>Description</em>}</li>
  *          <li>{@link org.eclipse.emf.emfstore.internal.server.model.accesscontrol.ACOrgUnit#getProperties
  *          <em>Properties</em>}</li>
+ *          <li>{@link org.eclipse.emf.emfstore.internal.server.model.accesscontrol.ACOrgUnit#getCreatedBy <em>Created
+ *          By</em>}</li>
  *          </ul>
  *
  * @see org.eclipse.emf.emfstore.internal.server.model.accesscontrol.AccesscontrolPackage#getACOrgUnit()
@@ -145,5 +147,34 @@ public interface ACOrgUnit<E extends ESOrgUnit> extends IdentifiableElement, API
 	 * @generated
 	 */
 	EList<OrgUnitProperty> getProperties();
+
+	/**
+	 * Returns the value of the '<em><b>Created By</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Created By</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 *
+	 * @return the value of the '<em>Created By</em>' attribute.
+	 * @see #setCreatedBy(String)
+	 * @see org.eclipse.emf.emfstore.internal.server.model.accesscontrol.AccesscontrolPackage#getACOrgUnit_CreatedBy()
+	 * @model
+	 * @generated
+	 */
+	String getCreatedBy();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.emf.emfstore.internal.server.model.accesscontrol.ACOrgUnit#getCreatedBy
+	 * <em>Created By</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 *
+	 * @param value the new value of the '<em>Created By</em>' attribute.
+	 * @see #getCreatedBy()
+	 * @generated
+	 */
+	void setCreatedBy(String value);
 
 } // ACOrgUnit

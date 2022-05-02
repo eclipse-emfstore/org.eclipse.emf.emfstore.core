@@ -2,12 +2,12 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: EMFStore API Test
 Bundle-SymbolicName: org.eclipse.emf.emfstore.client.example.test
-Bundle-Version: 1.9.0.qualifier
+Bundle-Version: 1.10.0.qualifier
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Require-Bundle: org.eclipse.emf.emfstore.example.merging;bundle-version="[1.9.0,2.0.0)",
- org.eclipse.emf.emfstore.example.helloworld;bundle-version="[1.9.0,2.0.0)",
- org.eclipse.emf.emfstore.client;bundle-version="[1.9.0,2.0.0)",
+Require-Bundle: org.eclipse.emf.emfstore.example.merging;bundle-version="[1.10.0,2.0.0)",
+ org.eclipse.emf.emfstore.example.helloworld;bundle-version="[1.10.0,2.0.0)",
+ org.eclipse.emf.emfstore.client;bundle-version="[1.10.0,2.0.0)",
  org.junit;bundle-version="[4.0.0,5.0.0)",
  org.eclipse.emf.emfstore.test.common;bundle-version="[2.0.0,3.0.0)"
 Export-Package: org.eclipse.emf.emfstore.client.example.test;version="
- 1.9.0";x-internal:=true
+ 1.10.0";x-internal:=true

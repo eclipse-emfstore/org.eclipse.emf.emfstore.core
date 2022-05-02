@@ -25,14 +25,26 @@ import org.eclipse.emf.emfstore.server.auth.ESPasswordHashGenerator;
 public class DefaultESPasswordHashGenerator implements ESPasswordHashGenerator {
 
 	/**
+	 * Default length of the generated salt.
+	 */
+	protected static final int SALT_PREFIX_LENGTH = 128;
+
+	/**
 	 * {@inheritDoc}
 	 *
 	 * @see org.eclipse.emf.emfstore.server.auth.ESPasswordHashGenerator#hashPassword(java.lang.String)
 	 */
 	public ESHashAndSalt hashPassword(String password) {
-		final String salt = RandomStringUtils.randomAlphanumeric(128);
+		final String salt = generateSalt();
 		final String hash = createHash(password, salt);
 		return org.eclipse.emf.emfstore.server.auth.ESHashAndSalt.create(hash, salt);
+	}
+
+	/**
+	 * @return the generated salt
+	 */
+	protected String generateSalt() {
+		return RandomStringUtils.randomAlphanumeric(SALT_PREFIX_LENGTH);
 	}
 
 	private String createHash(String password, final String salt) {

@@ -6,8 +6,8 @@ Bundle-Version: 1.6.0.qualifier
 Bundle-Activator: org.eclipse.emf.emfstore.client.test.alltests.Activator
 Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.7.0,4.0.0)",
  org.eclipse.emf.emfstore.client.test;bundle-version="[2.0.0,3.0.0)",
- org.eclipse.emf.emfstore.client.test.ui;bundle-version="[1.9.0,2.0.0)",
- org.eclipse.emf.emfstore.client;bundle-version="1.9.0",
+ org.eclipse.emf.emfstore.client.test.ui;bundle-version="[1.10.0,2.0.0)",
+ org.eclipse.emf.emfstore.client;bundle-version="1.10.0",
  org.junit;bundle-version="4.0.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

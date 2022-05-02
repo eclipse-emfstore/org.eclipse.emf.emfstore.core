@@ -149,8 +149,13 @@ public abstract class WorkspaceBase extends EObjectImpl implements Workspace, ES
 		projectToProjectSpaceMap = new LinkedHashMap<Project, ProjectSpace>();
 		// initialize all projectSpaces
 		for (final ProjectSpace projectSpace : getProjectSpaces()) {
-			projectSpace.init();
-			projectToProjectSpaceMap.put(projectSpace.getProject(), projectSpace);
+			try {
+				projectSpace.init();
+				projectToProjectSpaceMap.put(projectSpace.getProject(), projectSpace);
+			} // BEGIN SUPRESS CATCH EXCEPTION
+			catch (final RuntimeException ex) {// END SUPRESS CATCH EXCEPTION
+				ModelUtil.logException("Init of project " + projectSpace.getProjectName() + " failed!", ex); //$NON-NLS-1$//$NON-NLS-2$
+			}
 		}
 
 		ESWorkspaceProviderImpl.getObserverBus().register(this, DeleteProjectSpaceObserver.class);

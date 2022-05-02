@@ -34,17 +34,19 @@ import org.eclipse.emf.emfstore.server.model.ESOrgUnit;
  * <!-- begin-user-doc --> An implementation of the model object ' <em><b>AC Org Unit</b></em>'. <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
- * <ul>
- * <li>{@link org.eclipse.emf.emfstore.internal.server.model.accesscontrol.impl.ACOrgUnitImpl#getName <em>Name</em>}
- * </li>
- * <li>{@link org.eclipse.emf.emfstore.internal.server.model.accesscontrol.impl.ACOrgUnitImpl#getRoles <em>Roles</em>}
- * </li>
- * <li>{@link org.eclipse.emf.emfstore.internal.server.model.accesscontrol.impl.ACOrgUnitImpl#getDescription <em>
- * Description</em>}</li>
- * <li>{@link org.eclipse.emf.emfstore.internal.server.model.accesscontrol.impl.ACOrgUnitImpl#getProperties <em>
- * Properties</em>}</li>
- * </ul>
  * </p>
+ * <ul>
+ * <li>{@link org.eclipse.emf.emfstore.internal.server.model.accesscontrol.impl.ACOrgUnitImpl#getName
+ * <em>Name</em>}</li>
+ * <li>{@link org.eclipse.emf.emfstore.internal.server.model.accesscontrol.impl.ACOrgUnitImpl#getRoles
+ * <em>Roles</em>}</li>
+ * <li>{@link org.eclipse.emf.emfstore.internal.server.model.accesscontrol.impl.ACOrgUnitImpl#getDescription
+ * <em>Description</em>}</li>
+ * <li>{@link org.eclipse.emf.emfstore.internal.server.model.accesscontrol.impl.ACOrgUnitImpl#getProperties
+ * <em>Properties</em>}</li>
+ * <li>{@link org.eclipse.emf.emfstore.internal.server.model.accesscontrol.impl.ACOrgUnitImpl#getCreatedBy <em>Created
+ * By</em>}</li>
+ * </ul>
  *
  * @generated
  */
@@ -114,6 +116,28 @@ public class ACOrgUnitImpl<E extends ESOrgUnit> extends IdentifiableElementImpl 
 	 * @ordered
 	 */
 	protected EList<OrgUnitProperty> properties;
+
+	/**
+	 * The default value of the '{@link #getCreatedBy() <em>Created By</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 *
+	 * @see #getCreatedBy()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String CREATED_BY_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getCreatedBy() <em>Created By</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 *
+	 * @see #getCreatedBy()
+	 * @generated
+	 * @ordered
+	 */
+	protected String createdBy = CREATED_BY_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -267,6 +291,31 @@ public class ACOrgUnitImpl<E extends ESOrgUnit> extends IdentifiableElementImpl 
 	}
 
 	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 *
+	 * @generated
+	 */
+	public String getCreatedBy() {
+		return createdBy;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 *
+	 * @generated
+	 */
+	public void setCreatedBy(String newCreatedBy) {
+		final String oldCreatedBy = createdBy;
+		createdBy = newCreatedBy;
+		if (eNotificationRequired()) {
+			eNotify(new ENotificationImpl(this, Notification.SET, AccesscontrolPackage.AC_ORG_UNIT__CREATED_BY,
+				oldCreatedBy, createdBy));
+		}
+	}
+
+	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
 	 *
 	 * @generated
@@ -282,6 +331,8 @@ public class ACOrgUnitImpl<E extends ESOrgUnit> extends IdentifiableElementImpl 
 			return getDescription();
 		case AccesscontrolPackage.AC_ORG_UNIT__PROPERTIES:
 			return getProperties();
+		case AccesscontrolPackage.AC_ORG_UNIT__CREATED_BY:
+			return getCreatedBy();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -309,6 +360,9 @@ public class ACOrgUnitImpl<E extends ESOrgUnit> extends IdentifiableElementImpl 
 			getProperties().clear();
 			getProperties().addAll((Collection<? extends OrgUnitProperty>) newValue);
 			return;
+		case AccesscontrolPackage.AC_ORG_UNIT__CREATED_BY:
+			setCreatedBy((String) newValue);
+			return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -333,6 +387,9 @@ public class ACOrgUnitImpl<E extends ESOrgUnit> extends IdentifiableElementImpl 
 		case AccesscontrolPackage.AC_ORG_UNIT__PROPERTIES:
 			getProperties().clear();
 			return;
+		case AccesscontrolPackage.AC_ORG_UNIT__CREATED_BY:
+			setCreatedBy(CREATED_BY_EDEFAULT);
+			return;
 		}
 		super.eUnset(featureID);
 	}
@@ -353,6 +410,8 @@ public class ACOrgUnitImpl<E extends ESOrgUnit> extends IdentifiableElementImpl 
 			return DESCRIPTION_EDEFAULT == null ? description != null : !DESCRIPTION_EDEFAULT.equals(description);
 		case AccesscontrolPackage.AC_ORG_UNIT__PROPERTIES:
 			return properties != null && !properties.isEmpty();
+		case AccesscontrolPackage.AC_ORG_UNIT__CREATED_BY:
+			return CREATED_BY_EDEFAULT == null ? createdBy != null : !CREATED_BY_EDEFAULT.equals(createdBy);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -373,6 +432,8 @@ public class ACOrgUnitImpl<E extends ESOrgUnit> extends IdentifiableElementImpl 
 		result.append(name);
 		result.append(", description: "); //$NON-NLS-1$
 		result.append(description);
+		result.append(", createdBy: "); //$NON-NLS-1$
+		result.append(createdBy);
 		result.append(')');
 		return result.toString();
 	}

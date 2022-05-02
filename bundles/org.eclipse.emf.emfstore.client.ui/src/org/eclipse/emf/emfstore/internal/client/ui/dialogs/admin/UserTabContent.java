@@ -24,6 +24,7 @@ import org.eclipse.emf.emfstore.internal.client.ui.dialogs.EMFStoreMessageDialog
 import org.eclipse.emf.emfstore.internal.client.ui.dialogs.admin.acimport.wizard.AcUserImportAction;
 import org.eclipse.emf.emfstore.internal.client.ui.dialogs.admin.action.CreateUserAction;
 import org.eclipse.emf.emfstore.internal.client.ui.dialogs.admin.action.DeleteUserAction;
+import org.eclipse.emf.emfstore.internal.client.ui.util.PasswordHelper;
 import org.eclipse.emf.emfstore.internal.server.exceptions.AccessControlException;
 import org.eclipse.emf.emfstore.internal.server.model.accesscontrol.ACUser;
 import org.eclipse.emf.emfstore.server.exceptions.ESException;
@@ -98,6 +99,13 @@ public class UserTabContent extends TabContent implements IPropertyChangeListene
 
 				if (inputDialog.open() == Window.OK) {
 					final String newPassword = inputDialog.getValue();
+					if (!PasswordHelper.INSTANCE.matchesPattern(newPassword)) {
+						MessageDialog
+							.openWarning(activeShell,
+								Messages.UserTabContent_InvalidPassword,
+								PasswordHelper.INSTANCE.getInvalidPatternMessage());
+						continue;
+					}
 					try {
 						getAdminBroker().changeUser(user.getId(), user.getName(), newPassword);
 					} catch (final AccessControlException ex) {
