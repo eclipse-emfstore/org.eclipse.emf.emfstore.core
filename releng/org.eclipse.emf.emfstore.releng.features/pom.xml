@@ -23,8 +23,8 @@
 		<module>../../features/org.eclipse.emf.emfstore.client.transaction.feature</module>
 		<module>../../features/org.eclipse.emf.emfstore.client.ui.historybrowsercomparator.feature</module>
 		<module>../../features/org.eclipse.emf.emfstore.example.feature</module>
-		<module>../../features/org.eclipse.emf.emfstore.mongodb.client.feature</module>
-		<module>../../features/org.eclipse.emf.emfstore.mongodb.server.feature</module>
+<!-- 		<module>../../features/org.eclipse.emf.emfstore.mongodb.client.feature</module>
+		<module>../../features/org.eclipse.emf.emfstore.mongodb.server.feature</module> -->
 		<module>../../features/org.eclipse.emf.emfstore.sdk.feature</module>
 		<module>../../features/org.eclipse.emf.emfstore.modelmutator.feature</module>
 		<module>../../features/org.eclipse.emf.emfstore.fuzzy.feature</module>

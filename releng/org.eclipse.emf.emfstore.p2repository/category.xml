@@ -18,12 +18,6 @@
    <feature id="org.eclipse.emf.emfstore.example.feature" version="0.0.0">
       <category name="org.eclipse.emf.emfstore.core"/>
    </feature>
-   <feature id="org.eclipse.emf.emfstore.mongodb.client.feature" version="0.0.0">
-      <category name="org.eclipse.emf.emfstore.other"/>
-   </feature>
-   <feature id="org.eclipse.emf.emfstore.mongodb.server.feature" version="0.0.0">
-      <category name="org.eclipse.emf.emfstore.other"/>
-   </feature>  
    <feature id="org.eclipse.emf.emfstore.client.transaction.feature" version="0.0.0">
       <category name="org.eclipse.emf.emfstore.other"/>
    </feature>

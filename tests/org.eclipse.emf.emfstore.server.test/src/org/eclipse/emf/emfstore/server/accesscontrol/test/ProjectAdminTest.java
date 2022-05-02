@@ -183,6 +183,10 @@ public class ProjectAdminTest extends ESTestWithLoggedInUserMock {
 		return hasRole(orgUnitId, Roles.projectAdmin());
 	}
 
+	public static boolean hasServerAdminRole(ACOrgUnitId orgUnitId) throws ESException {
+		return hasRole(orgUnitId, Roles.serverAdmin());
+	}
+
 	public static boolean hasProjectAdminRole(ACUser user, ProjectId projectId) throws ESException {
 		final ACOrgUnit<?> orgUnit = getSuperAdminBroker().getOrgUnit(user.getId());
 
