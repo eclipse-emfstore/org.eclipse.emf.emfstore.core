@@ -1,0 +1,61 @@
+# Contributing to EMF Client
+
+Thanks for your interest in this project.
+
+## Project description
+
+The Eclipse EMF Client Platform is a framework for building EMF-based client
+applications. The goal is to provide reusable, adaptable and extensible UI
+components to develop applications based on a given EMF model. All components
+can be used stand-alone and be embedded into your own application. To get
+started, ECP provides a demo application, which integrates all provided
+components. This demo application allows you to get started by only providing
+your EMF model. 
+
+* https://projects.eclipse.org/projects/modeling.ecp
+
+## Developer resources
+
+Information regarding source code management, builds, coding standards, and
+more.
+
+* https://projects.eclipse.org/projects/modeling.ecp/developer
+
+The project maintains the following source code repositories
+
+* http://git.eclipse.org/c/emfclient/org.eclipse.emf.ecp.core.git
+* http://git.eclipse.org/c/emfclient/org.eclipse.emf.ecp.other.git
+* http://git.eclipse.org/c/emfclient/org.eclipse.emf.ecp.releng.git
+
+You will only need the http://git.eclipse.org/c/emfclient/org.eclipse.emf.ecp.core.git repository.
+In order to build you need to trigger `mvn clean install` on `releng/org.eclipse.emf.ecp.releng/pom.xml`.
+
+This project uses Bugzilla to track ongoing development and issues.
+
+* Search for issues: https://eclipse.org/bugs/buglist.cgi?product=ECP
+* Create a new report: https://eclipse.org/bugs/enter_bug.cgi?product=ECP
+
+Be sure to search for existing bugs before you create another one. Remember that
+contributions are always welcome!
+
+## Eclipse Contributor Agreement
+
+Before your contribution can be accepted by the project team contributors must
+electronically sign the Eclipse Contributor Agreement (ECA).
+
+* http://www.eclipse.org/legal/ECA.php
+
+Commits that are provided by non-committers must have a Signed-off-by field in
+the footer indicating that the author is aware of the terms by which the
+contribution has been provided to the project. The non-committer must
+additionally have an Eclipse Foundation account and must have a signed Eclipse
+Contributor Agreement (ECA) on file.
+
+For more information, please see the Eclipse Committer Handbook:
+https://www.eclipse.org/projects/handbook/#resources-commit
+
+## Contact
+
+Contact the project developers via the project's "dev" list.
+
+* https://dev.eclipse.org/mailman/listinfo/emfcp-dev
