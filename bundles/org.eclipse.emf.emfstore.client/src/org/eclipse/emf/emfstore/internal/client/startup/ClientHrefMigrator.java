@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.emf.emfstore.internal.client.model.Configuration;
@@ -134,9 +133,7 @@ public class ClientHrefMigrator extends ServerHrefMigrator {
 
 	private String getHrefAttribute(String pathToFile,
 		String tagName) throws ParserConfigurationException, SAXException, IOException {
-		final DocumentBuilderFactory docFactory = DocumentBuilderFactory
-			.newInstance();
-		final DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+		final DocumentBuilder docBuilder = createSafeDocumentBuilder();
 		final Document doc = docBuilder.parse(new File(pathToFile).toURI().toString());
 
 		final NodeList tagElements = doc.getElementsByTagName(tagName);

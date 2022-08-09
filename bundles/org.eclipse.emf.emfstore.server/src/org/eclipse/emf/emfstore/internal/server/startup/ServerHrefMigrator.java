@@ -101,6 +101,20 @@ public class ServerHrefMigrator {
 		return true;
 	}
 
+	/** Create a XML document builder with disabled external entity resolvement to prevent XXE attacks */
+	protected static DocumentBuilder createSafeDocumentBuilder() throws ParserConfigurationException {
+		// See
+		// https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html#jaxp-documentbuilderfactory-saxparserfactory-and-dom4j
+		// on the features to disable
+		final DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+		docFactory.setFeature("http://xml.org/sax/features/external-general-entities", false); //$NON-NLS-1$
+		docFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false); //$NON-NLS-1$
+		docFactory.setExpandEntityReferences(false);
+		docFactory.setXIncludeAware(false);
+		final DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+		return docBuilder;
+	}
+
 	private boolean isMigrationNeeded(String pathToServerSpace) {
 		try {
 			final String toMatch = getProjectAttribute(pathToServerSpace);
@@ -199,9 +213,7 @@ public class ServerHrefMigrator {
 
 	private String getProjectAttribute(String pathToFile) throws ParserConfigurationException, SAXException,
 		IOException {
-		final DocumentBuilderFactory docFactory = DocumentBuilderFactory
-			.newInstance();
-		final DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+		final DocumentBuilder docBuilder = createSafeDocumentBuilder();
 		final Document doc = docBuilder.parse(pathToFile);
 
 		final Node serverSpace = doc.getFirstChild();
@@ -230,9 +242,7 @@ public class ServerHrefMigrator {
 		String tagName, UpdateXMIAttributeRule rule) throws InvocationTargetException {
 
 		try {
-			final DocumentBuilderFactory docFactory = DocumentBuilderFactory
-				.newInstance();
-			final DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+			final DocumentBuilder docBuilder = createSafeDocumentBuilder();
 			final Document doc = docBuilder.parse(pathToFile);
 
 			final NodeList tagElements = doc.getElementsByTagName(tagName);
@@ -272,8 +282,7 @@ public class ServerHrefMigrator {
 	private void removeReferencesToCorruptProject(String serverHome, String projectId)
 		throws InvocationTargetException {
 		try {
-			final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			final DocumentBuilder builder = factory.newDocumentBuilder();
+			final DocumentBuilder builder = createSafeDocumentBuilder();
 			final Document doc = builder.parse(serverHome);
 			final XPathFactory xPathfactory = XPathFactory.newInstance();
 			final XPath xpath = xPathfactory.newXPath();
@@ -314,9 +323,7 @@ public class ServerHrefMigrator {
 	protected void migrateNonContainment(String pathToFile,
 		String tagName, UpdateXMIAttributeRule rule) throws InvocationTargetException {
 		try {
-			final DocumentBuilderFactory docFactory = DocumentBuilderFactory
-				.newInstance();
-			final DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+			final DocumentBuilder docBuilder = createSafeDocumentBuilder();
 			final Document doc = docBuilder.parse(pathToFile);
 
 			final Node serverSpace = doc.getFirstChild();
