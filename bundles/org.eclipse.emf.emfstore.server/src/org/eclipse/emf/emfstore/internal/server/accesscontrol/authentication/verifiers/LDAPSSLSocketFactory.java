@@ -11,6 +11,8 @@
  ******************************************************************************/
 package org.eclipse.emf.emfstore.internal.server.accesscontrol.authentication.verifiers;
 
+import static org.eclipse.emf.emfstore.internal.common.SocketUtil.enableTLSv12PlusAndReturn;
+
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
@@ -24,6 +26,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
 
+import org.eclipse.emf.emfstore.internal.common.FatalSocketException;
 import org.eclipse.emf.emfstore.internal.server.connection.ServerKeyStoreManager;
 import org.eclipse.emf.emfstore.internal.server.exceptions.ServerKeyStoreException;
 
@@ -43,7 +46,7 @@ public class LDAPSSLSocketFactory extends SSLSocketFactory {
 	public LDAPSSLSocketFactory() {
 		SSLContext context;
 		try {
-			context = SSLContext.getInstance("TLS"); //$NON-NLS-1$
+			context = SSLContext.getInstance("TLSv1.3"); //$NON-NLS-1$
 			final TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(
 				TrustManagerFactory.getDefaultAlgorithm());
 			trustManagerFactory.init(ServerKeyStoreManager.getInstance().getKeyStore());
@@ -73,7 +76,11 @@ public class LDAPSSLSocketFactory extends SSLSocketFactory {
 
 	@Override
 	public Socket createSocket(Socket arg0, String arg1, int arg2, boolean arg3) throws IOException {
-		return socketFactory.createSocket(arg0, arg1, arg2, arg3);
+		try {
+			return enableTLSv12PlusAndReturn(socketFactory.createSocket(arg0, arg1, arg2, arg3));
+		} catch (final FatalSocketException ex) {
+			throw new IOException(ex.getMessage());
+		}
 	}
 
 	@Override
@@ -88,23 +95,39 @@ public class LDAPSSLSocketFactory extends SSLSocketFactory {
 
 	@Override
 	public Socket createSocket(String arg0, int arg1) throws IOException, UnknownHostException {
-		return socketFactory.createSocket(arg0, arg1);
+		try {
+			return enableTLSv12PlusAndReturn(socketFactory.createSocket(arg0, arg1));
+		} catch (final FatalSocketException ex) {
+			throw new IOException(ex.getMessage());
+		}
 	}
 
 	@Override
 	public Socket createSocket(InetAddress arg0, int arg1) throws IOException {
-		return socketFactory.createSocket(arg0, arg1);
+		try {
+			return enableTLSv12PlusAndReturn(socketFactory.createSocket(arg0, arg1));
+		} catch (final FatalSocketException ex) {
+			throw new IOException(ex.getMessage());
+		}
 	}
 
 	@Override
 	public Socket createSocket(String arg0, int arg1, InetAddress arg2, int arg3) throws IOException,
 		UnknownHostException {
-		return socketFactory.createSocket(arg0, arg1, arg2, arg3);
+		try {
+			return enableTLSv12PlusAndReturn(socketFactory.createSocket(arg0, arg1, arg2, arg3));
+		} catch (final FatalSocketException ex) {
+			throw new IOException(ex.getMessage());
+		}
 	}
 
 	@Override
 	public Socket createSocket(InetAddress arg0, int arg1, InetAddress arg2, int arg3) throws IOException {
-		return socketFactory.createSocket(arg0, arg1, arg2, arg3);
+		try {
+			return enableTLSv12PlusAndReturn(socketFactory.createSocket(arg0, arg1, arg2, arg3));
+		} catch (final FatalSocketException ex) {
+			throw new IOException(ex.getMessage());
+		}
 	}
 
 }

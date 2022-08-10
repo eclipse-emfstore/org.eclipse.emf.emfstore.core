@@ -360,7 +360,7 @@ public final class KeyStoreManager implements ESKeyStoreManager {
 			managerFactory.init(keyStore, KEYSTOREPASSWORD.toCharArray());
 			final TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance("SunX509"); //$NON-NLS-1$
 			trustManagerFactory.init(keyStore);
-			final SSLContext sslContext = SSLContext.getInstance("TLS"); //$NON-NLS-1$
+			final SSLContext sslContext = SSLContext.getInstance("TLSv1.3"); //$NON-NLS-1$
 			sslContext.init(managerFactory.getKeyManagers(), trustManagerFactory.getTrustManagers(), null);
 
 			HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
