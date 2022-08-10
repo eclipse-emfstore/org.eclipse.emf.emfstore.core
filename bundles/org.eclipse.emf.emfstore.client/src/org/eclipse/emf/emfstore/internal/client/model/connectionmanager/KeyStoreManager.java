@@ -72,7 +72,7 @@ public final class KeyStoreManager implements ESKeyStoreManager {
 	public static final String KEYSTORENAME = "emfstoreClient.keystore"; //$NON-NLS-1$
 	private static final String KEYSTOREPASSWORD = "654321"; //$NON-NLS-1$
 	private static final String CERTIFICATE_TYPE = "X.509"; //$NON-NLS-1$
-	private static final String CIPHER_ALGORITHM = "RSA"; //$NON-NLS-1$
+	private static final String CIPHER_ALGORITHM = "RSA/ECB/OAEPWithSHA-256AndMGF1Padding"; //$NON-NLS-1$
 
 	/**
 	 * Certificate Alias for development test certificate.

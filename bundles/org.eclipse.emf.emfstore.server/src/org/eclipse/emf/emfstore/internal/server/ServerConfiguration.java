@@ -130,7 +130,7 @@ public final class ServerConfiguration {
 	/**
 	 * Default cipher algorithm.
 	 */
-	public static final String KEYSTORE_CIPHER_ALGORITHM_DEFAULT = "RSA"; //$NON-NLS-1$
+	public static final String KEYSTORE_CIPHER_ALGORITHM_DEFAULT = "RSA/ECB/OAEPWithSHA-256AndMGF1Padding"; //$NON-NLS-1$
 
 	/**
 	 * Property for projectstate persistence policy in versions. Possible values

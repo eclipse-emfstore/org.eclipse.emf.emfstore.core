@@ -72,8 +72,7 @@ public final class ServerKeyStoreManager {
 				throw new ServerKeyStoreException("Password is null.");
 			}
 			final byte[] passwordBytes = Base64.decodeBase64(password.getBytes());
-			final Cipher cipher = Cipher.getInstance(ServerConfiguration.getProperties().getProperty(
-				ServerConfiguration.KEYSTORE_CIPHER_ALGORITHM, ServerConfiguration.KEYSTORE_CIPHER_ALGORITHM_DEFAULT));
+			final Cipher cipher = Cipher.getInstance(ServerConfiguration.KEYSTORE_CIPHER_ALGORITHM_DEFAULT);
 			cipher.init(Cipher.DECRYPT_MODE, getDecryptionKey());
 			return new String(cipher.doFinal(passwordBytes));
 		} catch (final NoSuchAlgorithmException e) {
