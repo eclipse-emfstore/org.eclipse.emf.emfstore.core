@@ -23,6 +23,10 @@ public class ServerLocationProvider extends DefaultServerWorkspaceLocationProvid
 	 */
 	@Override
 	protected String getRootDirectory() {
+		final String rootDir = System.getenv("EMFSTORE_TEST_SERVER_ROOT_DIR"); //$NON-NLS-1$
+		if (rootDir != null && rootDir.length() > 0) {
+			return rootDir;
+		}
 		return ResourcesPlugin.getWorkspace().getRoot().getLocation().toString();
 	}
 }

@@ -12,7 +12,6 @@
 package org.eclipse.emf.emfstore.server.accesscontrol.test;
 
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.eclipse.emf.emfstore.internal.server.accesscontrol.DefaultESPasswordHashGenerator;
@@ -35,8 +34,8 @@ public class DefaultESPasswordHashGeneratorTests {
 	public void testHashPasswordSamePasswordDifferentSalts() {
 		final ESHashAndSalt hash1 = passwordHashGenerator.hashPassword(PASSWORD);
 		final ESHashAndSalt hash2 = passwordHashGenerator.hashPassword(PASSWORD);
-		assertNotEquals(hash1.getSalt(), hash2.getSalt());
-		assertNotEquals(hash1.getHash(), hash2.getHash());
+		assertFalse(hash1.getSalt().equals(hash2.getSalt()));
+		assertFalse(hash1.getHash().equals(hash2.getHash()));
 	}
 
 	@Test
