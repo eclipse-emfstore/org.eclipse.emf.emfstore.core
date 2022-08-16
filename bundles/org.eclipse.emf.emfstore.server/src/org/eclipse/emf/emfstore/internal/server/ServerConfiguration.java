@@ -204,11 +204,6 @@ public final class ServerConfiguration {
 	public static final String SUPER_USER_PASSWORD_SALT = "emfstore.accesscontrol.authentication.superuser.password.salt"; //$NON-NLS-1$
 
 	/**
-	 * Default super user password.
-	 */
-	public static final String SUPER_USER_PASSWORD_DEFAULT = "super"; //$NON-NLS-1$
-
-	/**
 	 * Property for authentication policy used by server. E.g. ldap or property
 	 * file.
 	 */
