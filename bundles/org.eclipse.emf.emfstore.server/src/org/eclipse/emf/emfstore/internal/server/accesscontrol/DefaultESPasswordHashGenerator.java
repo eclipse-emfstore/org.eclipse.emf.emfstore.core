@@ -11,8 +11,9 @@
  ******************************************************************************/
 package org.eclipse.emf.emfstore.internal.server.accesscontrol;
 
+import java.security.SecureRandom;
+
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.lang.RandomStringUtils;
 import org.eclipse.emf.emfstore.server.auth.ESPasswordHashGenerator;
 
 /**
@@ -25,9 +26,21 @@ import org.eclipse.emf.emfstore.server.auth.ESPasswordHashGenerator;
 public class DefaultESPasswordHashGenerator implements ESPasswordHashGenerator {
 
 	/**
+	 * {@link SecureRandom} instance used by the generator.
+	 */
+	protected static final SecureRandom SECURERANDOM = new SecureRandom();
+
+	/**
 	 * Default length of the generated salt.
 	 */
 	protected static final int SALT_PREFIX_LENGTH = 128;
+
+	/** Alphanumeric characters. */
+	protected static final String ALPHANUMERIC = "1234567890" + //$NON-NLS-1$
+		"ABCDEFGHIJKLMNOPQRSTUVWXYZ" + //$NON-NLS-1$
+		"abcdefghijklmnopqrstuvwxyz"; //$NON-NLS-1$
+
+	private static final char[] ALPHANUMERIC_CHARS = ALPHANUMERIC.toCharArray();
 
 	/**
 	 * {@inheritDoc}
@@ -43,8 +56,20 @@ public class DefaultESPasswordHashGenerator implements ESPasswordHashGenerator {
 	/**
 	 * @return the generated salt
 	 */
-	protected String generateSalt() {
-		return RandomStringUtils.randomAlphanumeric(SALT_PREFIX_LENGTH);
+	public String generateSalt() {
+		return generateSalt(SALT_PREFIX_LENGTH);
+	}
+
+	/**
+	 * @param length the length of the generated salt
+	 * @return the generated salt
+	 */
+	public String generateSalt(int length) {
+		final char[] randomChars = new char[length];
+		for (int i = 0; i < length; i++) {
+			randomChars[i] = ALPHANUMERIC_CHARS[SECURERANDOM.nextInt(ALPHANUMERIC_CHARS.length)];
+		}
+		return new String(randomChars);
 	}
 
 	private String createHash(String password, final String salt) {
