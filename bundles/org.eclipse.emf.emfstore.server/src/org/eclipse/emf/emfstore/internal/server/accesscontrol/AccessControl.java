@@ -11,6 +11,7 @@
  ******************************************************************************/
 package org.eclipse.emf.emfstore.internal.server.accesscontrol;
 
+import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
 import java.util.List;
 
@@ -118,7 +119,11 @@ public class AccessControl {
 			final List<ESPasswordHashGenerator> services = new ESExtensionPoint(ACCESSCONTROL_EXTENSION_ID, false)
 				.getClasses(PASSWORD_HASH_GENERATOR_CLASS, ESPasswordHashGenerator.class);
 			if (services.isEmpty()) {
-				passwordHashGenerator = new DefaultESPasswordHashGenerator();
+				try {
+					passwordHashGenerator = new DefaultESPasswordHashGenerator();
+				} catch (final NoSuchAlgorithmException ex) {
+					throw new IllegalStateException(ex);
+				}
 			} else if (services.size() == 1) {
 				passwordHashGenerator = services.get(0);
 			} else {
@@ -130,7 +135,11 @@ public class AccessControl {
 		} catch (final ESExtensionPointException e) {
 			final String message = Messages.AccessControl_CustomAuthorizationInitFailed;
 			ModelUtil.logException(message, e);
-			passwordHashGenerator = new DefaultESPasswordHashGenerator();
+			try {
+				passwordHashGenerator = new DefaultESPasswordHashGenerator();
+			} catch (final NoSuchAlgorithmException ex) {
+				throw new IllegalStateException(ex);
+			}
 		}
 		AccessControl.passwordHashGenerator = passwordHashGenerator;
 		return passwordHashGenerator;
