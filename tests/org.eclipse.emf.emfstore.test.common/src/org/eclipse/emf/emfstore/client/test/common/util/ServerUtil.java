@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -160,7 +161,18 @@ public final class ServerUtil {
 		copyFileToWorkspace(ServerConfiguration.getServerKeyStorePath(), ServerConfiguration.SERVER_KEYSTORE_FILE,
 			Messages.ServerUtil_Failed_To_Copy_Keystore, Messages.ServerUtil_Keystore_Copied_To_Server_Workspace);
 
-		ServerConfiguration.setProperties(initProperties(properties));
+		// make sure that if no super user password is set, we set the default one
+		final Map<String, String> additionalProperties = new LinkedHashMap<String, String>(properties);
+		if (!properties.containsKey(ServerConfiguration.SUPER_USER_PASSWORD_HASH) &&
+			!properties.containsKey(ServerConfiguration.SUPER_USER_PASSWORD_SALT) &&
+			!properties.containsKey(ServerConfiguration.SUPER_USER_PASSWORD)) {
+			additionalProperties.put(ServerConfiguration.SUPER_USER_PASSWORD_HASH,
+				"f262c3daf9b9c8fd380bdf34a415ee01c38e423d956d4f9c732273cf51264783787415c3b6d8701f3416735a31b06b8330e0be0d17ae5361ef83de320f17ba84"); //$NON-NLS-1$
+			additionalProperties.put(ServerConfiguration.SUPER_USER_PASSWORD_SALT,
+				"8a0InZ2yZMss65zHJrdhOXU6CqF8EeFncdv7V29ZO4qD565i5deWWXIi7aRkYwbY2BWamdOYQGqoZeZiJHZ0BH1mteMIhu3eIG5D2twfVQtjetvf8kiLOMwnYDsk4HPq"); //$NON-NLS-1$
+		}
+
+		ServerConfiguration.setProperties(initProperties(additionalProperties));
 		setSuperUser(daoFacadeMock);
 		final AccessControl accessControl = new AccessControl(
 			ESAuthenticationControlType.model,
