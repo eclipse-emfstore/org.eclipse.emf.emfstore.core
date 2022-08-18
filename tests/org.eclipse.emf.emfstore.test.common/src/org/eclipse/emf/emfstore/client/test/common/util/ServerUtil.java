@@ -74,8 +74,6 @@ import org.osgi.framework.FrameworkUtil;
  */
 public final class ServerUtil {
 
-	private static final String EMFSTORE_ACCESSCONTROL_AUTHENTICATION_SUPERUSER_PASSWORD_SALT = "emfstore.accesscontrol.authentication.superuser.password.salt"; //$NON-NLS-1$
-	private static final String EMFSTORE_ACCESSCONTROL_AUTHENTICATION_SUPERUSER_PASSWORD_HASH = "emfstore.accesscontrol.authentication.superuser.password.hash"; //$NON-NLS-1$
 	private static final String ES_PROPERTIES_FILE = "es.properties"; //$NON-NLS-1$
 
 	private ServerUtil() {
@@ -165,12 +163,12 @@ public final class ServerUtil {
 
 		// make sure that if no super user password is set, we set the default one
 		final Map<String, String> additionalProperties = new LinkedHashMap<String, String>(properties);
-		if (!properties.containsKey(EMFSTORE_ACCESSCONTROL_AUTHENTICATION_SUPERUSER_PASSWORD_HASH) &&
-			!properties.containsKey(EMFSTORE_ACCESSCONTROL_AUTHENTICATION_SUPERUSER_PASSWORD_SALT) &&
+		if (!properties.containsKey(ServerConfiguration.SUPER_USER_PASSWORD_HASH) &&
+			!properties.containsKey(ServerConfiguration.SUPER_USER_PASSWORD_SALT) &&
 			!properties.containsKey(ServerConfiguration.SUPER_USER_PASSWORD)) {
-			additionalProperties.put(EMFSTORE_ACCESSCONTROL_AUTHENTICATION_SUPERUSER_PASSWORD_HASH,
+			additionalProperties.put(ServerConfiguration.SUPER_USER_PASSWORD_HASH,
 				"f262c3daf9b9c8fd380bdf34a415ee01c38e423d956d4f9c732273cf51264783787415c3b6d8701f3416735a31b06b8330e0be0d17ae5361ef83de320f17ba84"); //$NON-NLS-1$
-			additionalProperties.put(EMFSTORE_ACCESSCONTROL_AUTHENTICATION_SUPERUSER_PASSWORD_SALT,
+			additionalProperties.put(ServerConfiguration.SUPER_USER_PASSWORD_SALT,
 				"8a0InZ2yZMss65zHJrdhOXU6CqF8EeFncdv7V29ZO4qD565i5deWWXIi7aRkYwbY2BWamdOYQGqoZeZiJHZ0BH1mteMIhu3eIG5D2twfVQtjetvf8kiLOMwnYDsk4HPq"); //$NON-NLS-1$
 		}
 

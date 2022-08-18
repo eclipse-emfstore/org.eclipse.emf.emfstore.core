@@ -79,7 +79,7 @@ public abstract class PasswordVerifier implements ESUserVerifier {
 	 */
 	protected boolean verifySuperUser(String username, String password) {
 		final ESPasswordHashGenerator passwordHashGenerator = AccessControl.getESPasswordHashGenerator();
-		if (hash == null && salt == null) {
+		if (hash == null || salt == null) {
 			return false;
 		}
 		return username.equals(superuser) && passwordHashGenerator.verifyPassword(password, hash, salt);
