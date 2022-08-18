@@ -50,7 +50,7 @@ public class DefaultESPasswordHashGenerator implements ESPasswordHashGenerator {
 
 	private static final String PBKDF2_ALGORITHM = "PBKDF2WithHmacSHA1"; //$NON-NLS-1$
 
-	private static final int PBKDF2_ITERATION_COUT = 65536;
+	private static final int PBKDF2_ITERATION_COUNT = 65536;
 
 	private static final char[] ALPHANUMERIC_CHARS = ALPHANUMERIC.toCharArray();
 
@@ -114,7 +114,7 @@ public class DefaultESPasswordHashGenerator implements ESPasswordHashGenerator {
 	protected final String pBKDF2(String password, String salt) {
 		try {
 			final KeySpec spec = new PBEKeySpec(password.toCharArray(), salt.getBytes(), //
-				PBKDF2_ITERATION_COUT, KEY_LENGTH);
+				PBKDF2_ITERATION_COUNT, KEY_LENGTH);
 			final byte[] encoded = secretKeyFactory.generateSecret(spec).getEncoded();
 			final byte[] base64EncodedByteAr = Base64.encodeBase64(encoded);
 			return new String(base64EncodedByteAr);
