@@ -157,7 +157,7 @@ public class ReservationSet {
 	 */
 	public void addFeatureReservation(String modelElementId, String featureName,
 		ConflictBucketCandidate conflictBucketCandidate) {
-		if (featureName == FeatureNameReservationMap.EXISTENCE_FEATURE) {
+		if (FeatureNameReservationMap.EXISTENCE_FEATURE.equals(featureName)) {
 			addExistenceReservation(modelElementId);
 			return;
 		}
