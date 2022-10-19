@@ -19,6 +19,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -113,6 +114,15 @@ public class ServerHrefMigrator {
 		docFactory.setXIncludeAware(false);
 		final DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 		return docBuilder;
+	}
+
+	protected static TransformerFactory createSafeTransformerFactory() {
+		// Prevent XXE according to
+		// https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html#transformerfactory
+		final TransformerFactory factory = TransformerFactory.newInstance();
+		factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, ""); //$NON-NLS-1$
+		factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, ""); //$NON-NLS-1$
+		return factory;
 	}
 
 	private boolean isMigrationNeeded(String pathToServerSpace) {
@@ -256,8 +266,7 @@ public class ServerHrefMigrator {
 				nodeAttr.setTextContent(hrefNew);
 			}
 
-			final TransformerFactory transformerFactory = TransformerFactory
-				.newInstance();
+			final TransformerFactory transformerFactory = createSafeTransformerFactory();
 			final Transformer transformer = transformerFactory.newTransformer();
 			final DOMSource source = new DOMSource(doc);
 			final StreamResult result = new StreamResult(new File(pathToFile));
@@ -291,8 +300,7 @@ public class ServerHrefMigrator {
 			for (int i = 0; i < nl.getLength(); i++) {
 				nl.item(i).getParentNode().removeChild(nl.item(i));
 			}
-			final TransformerFactory transformerFactory = TransformerFactory
-				.newInstance();
+			final TransformerFactory transformerFactory = createSafeTransformerFactory();
 			final Transformer transformer = transformerFactory.newTransformer();
 			final DOMSource source = new DOMSource(doc);
 			final StreamResult result = new StreamResult(new File(serverHome));
@@ -336,8 +344,7 @@ public class ServerHrefMigrator {
 			final String attributeNew = rule.getNewAttribute(attributeOld);
 			nodeAttr.setTextContent(attributeNew);
 
-			final TransformerFactory transformerFactory = TransformerFactory
-				.newInstance();
+			final TransformerFactory transformerFactory = createSafeTransformerFactory();
 			final Transformer transformer = transformerFactory.newTransformer();
 			final DOMSource source = new DOMSource(doc);
 			final StreamResult result = new StreamResult(new File(pathToFile));
