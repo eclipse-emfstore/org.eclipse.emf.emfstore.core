@@ -133,6 +133,7 @@ public class XmlRpcEmfStoreImpl implements EMFStore {
 	public ProjectInfo createEmptyProject(SessionId sessionId, String name, String description, LogMessage logMessage)
 		throws ESException {
 		final ProjectInfo projectInfo = getEmfStore().createEmptyProject(sessionId, name, description, logMessage);
+		log(sessionId, MessageFormat.format("Created empty project ''{0}''", name)); //$NON-NLS-1$
 		final ESSessionId resolvedSession = getAccessControl().getSessions().resolveSessionById(sessionId.getId());
 		final SessionId session = APIUtil.toInternal(SessionId.class, resolvedSession);
 		ShareProjectAdapter.attachTo(session, projectInfo.getProjectId());
@@ -145,6 +146,7 @@ public class XmlRpcEmfStoreImpl implements EMFStore {
 	public ProjectInfo createProject(SessionId sessionId, String name, String description, LogMessage logMessage,
 		Project project) throws ESException {
 		final ProjectInfo projectInfo = getEmfStore().createProject(sessionId, name, description, logMessage, project);
+		log(sessionId, MessageFormat.format("Created project ''{0}'' with initial state (shared project).", name)); //$NON-NLS-1$
 		final ESSessionId resolvedSession = getAccessControl().getSessions().resolveSessionById(sessionId.getId());
 		final SessionId session = APIUtil.toInternal(SessionId.class, resolvedSession);
 		ShareProjectAdapter.attachTo(session, projectInfo.getProjectId());
@@ -167,6 +169,8 @@ public class XmlRpcEmfStoreImpl implements EMFStore {
 
 	public void deleteProject(SessionId sessionId, ProjectId projectId, boolean deleteFiles) throws ESException {
 		getEmfStore().deleteProject(sessionId, projectId, deleteFiles);
+		log(sessionId, MessageFormat.format("Deleted project with ID ''{0}''. Deleted files: {1}", projectId.getId(), //$NON-NLS-1$
+			deleteFiles));
 	}
 
 	/**
@@ -219,7 +223,9 @@ public class XmlRpcEmfStoreImpl implements EMFStore {
 	 */
 	public Project getProject(SessionId sessionId, ProjectId projectId, VersionSpec versionSpec)
 		throws ESException {
-		return getEmfStore().getProject(sessionId, projectId, versionSpec);
+		final Project project = getEmfStore().getProject(sessionId, projectId, versionSpec);
+		log(sessionId, MessageFormat.format("Get project with ID ''{0}''.", projectId.getId())); //$NON-NLS-1$
+		return project;
 	}
 
 	/**
@@ -234,7 +240,10 @@ public class XmlRpcEmfStoreImpl implements EMFStore {
 	 */
 	public ProjectId importProjectHistoryToServer(SessionId sessionId, ProjectHistory projectHistory)
 		throws ESException {
-		return getEmfStore().importProjectHistoryToServer(sessionId, projectHistory);
+		final ProjectId projectId = getEmfStore().importProjectHistoryToServer(sessionId, projectHistory);
+		log(sessionId,
+			MessageFormat.format("Imported project history resulting in project with ID ''{0}''.", projectId.getId())); //$NON-NLS-1$
+		return projectId;
 	}
 
 	/**
@@ -350,6 +359,8 @@ public class XmlRpcEmfStoreImpl implements EMFStore {
 	 */
 	public void deleteFile(SessionId sessionId, ProjectId projectId, FileIdentifier fileIdentifier) throws ESException {
 		getEmfStore().deleteFile(sessionId, projectId, fileIdentifier);
+		log(sessionId, MessageFormat.format("Deleted file with ID ''{0}'' from project with ID ''{1}''", //$NON-NLS-1$
+			fileIdentifier.getIdentifier(), projectId.getId()));
 	}
 
 	private void log(String message) {
