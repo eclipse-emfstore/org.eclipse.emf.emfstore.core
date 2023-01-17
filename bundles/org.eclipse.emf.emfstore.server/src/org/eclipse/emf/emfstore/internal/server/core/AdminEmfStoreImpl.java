@@ -12,6 +12,7 @@
 package org.eclipse.emf.emfstore.internal.server.core;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -26,6 +27,7 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.emfstore.internal.common.APIUtil;
 import org.eclipse.emf.emfstore.internal.common.model.util.ModelUtil;
+import org.eclipse.emf.emfstore.internal.server.Activator;
 import org.eclipse.emf.emfstore.internal.server.AdminEmfStore;
 import org.eclipse.emf.emfstore.internal.server.accesscontrol.AccessControl;
 import org.eclipse.emf.emfstore.internal.server.accesscontrol.HasRolePredicate;
@@ -157,6 +159,7 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements Admi
 			ESProjectAdminPrivileges.CreateGroup);
 
 		if (groupExists(name)) {
+			log(sessionId, MessageFormat.format("Failed to create group ''{0}''. It already exists.", name)); //$NON-NLS-1$
 			throw new InvalidInputException(Messages.AdminEmfStoreImpl_Group_Already_Exists);
 		}
 
@@ -169,6 +172,7 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements Admi
 		}
 		getAccessControl().getOrgUnitProviderService().addGroup(acGroup.toAPI());
 		save();
+		log(sessionId, MessageFormat.format("Created group ''{0}''", name)); //$NON-NLS-1$
 		return ModelUtil.clone(acGroup.getId());
 	}
 
@@ -199,8 +203,12 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements Admi
 				group.toAPI());
 		}
 
-		getGroup(group).getMembers().remove(getOrgUnit(user));
+		final ACGroup acGroup = getGroup(group);
+		final ACOrgUnit<?> acUser = getOrgUnit(user);
+		acGroup.getMembers().remove(acUser);
 		save();
+		log(sessionId,
+			MessageFormat.format("Removed user ''{0}'' from group ''{1}''", acUser.getName(), acGroup.getName())); //$NON-NLS-1$
 	}
 
 	/**
@@ -238,6 +246,7 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements Admi
 				getAccessControl().getOrgUnitProviderService().removeGroup(nextGroup.toAPI());
 				EcoreUtil.delete(nextGroup);
 				save();
+				log(sessionId, MessageFormat.format("Deleted group ''{0}''.", group.getName())); //$NON-NLS-1$
 				return;
 			}
 		}
@@ -285,6 +294,9 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements Admi
 		}
 
 		addToGroup(groupId, member);
+		log(sessionId,
+			MessageFormat.format("Added member ''{0}'' to group ''{1}''", getOrgUnit(member).getName(), //$NON-NLS-1$
+				getGroup(groupId).getName()));
 	}
 
 	private void addToGroup(ACOrgUnitId group, ACOrgUnitId member) throws ESException {
@@ -315,6 +327,9 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements Admi
 		}
 
 		removeFromGroup(group, member);
+		log(sessionId,
+			MessageFormat.format("Removed member ''{0}'' from group ''{1}''", getOrgUnit(member).getName(), //$NON-NLS-1$
+				getGroup(group).getName()));
 	}
 
 	private void removeFromGroup(ACOrgUnitId group, ACOrgUnitId member) throws ESException {
@@ -395,6 +410,10 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements Admi
 			if (areEqual(role, roleClass)) {
 				role.getProjects().add(ModelUtil.clone(projectId));
 				save();
+				log(sessionId,
+					MessageFormat.format("Added participant ''{0}'' with role ''{1}'' to project ''{2}'' (ID: {3})", //$NON-NLS-1$
+						getOrgUnit(participantId).getName(), roleClass.getName(), getProjectName(projectId),
+						projectId.getId()));
 				return;
 			}
 		}
@@ -404,6 +423,10 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements Admi
 		newRole.getProjects().add(ModelUtil.clone(projectId));
 		orgUnit.getRoles().add(newRole);
 		save();
+		log(sessionId,
+			MessageFormat.format("Added participant ''{0}'' with role ''{1}'' to project ''{2}'' (ID: {3})", //$NON-NLS-1$
+				getOrgUnit(participantId).getName(), roleClass.getName(), getProjectName(projectId),
+				projectId.getId()));
 	}
 
 	/**
@@ -442,12 +465,16 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements Admi
 			if (areEqual(role, roleClass)) {
 				role.getProjects().add(ModelUtil.clone(projectId));
 				save();
+				log(sessionId,
+					MessageFormat.format(
+						"Added initial participant ''{0}'' with role ''{1}'' to project ''{2}'' (ID: {3})", //$NON-NLS-1$
+						orgUnit.getName(), roleClass.getName(), getProjectName(projectId), projectId.getId()));
 				return;
 			}
 		}
 
-		// If we get until here, the user has the priviliges to create the project and be the initial participant.
-		// Because the corresponding role was not found in the user's roles, it must be part of one of the user's
+		// If we get until here, the user has the privileges to create the project and be the initial participant.
+		// Because the corresponding role was not found in the user''s roles, it must be part of one of the user''s
 		// groups. To avoid the whole group becoming participants of the project, create the role for the user and add
 		// the project id.
 		final Role newRole = createRoleFromEClass(roleClass);
@@ -455,6 +482,9 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements Admi
 		newRole.getProjects().add(ModelUtil.clone(projectId));
 		orgUnit.getRoles().add(newRole);
 		save();
+		log(sessionId,
+			MessageFormat.format("Added initial participant ''{0}'' with role ''{1}'' to project ''{2}'' (ID: {3})", //$NON-NLS-1$
+				orgUnit.getName(), roleClass.getName(), getProjectName(projectId), projectId.getId()));
 	}
 
 	private static void checkIfSessionIsAssociatedWithProject(SessionId sessionId, ProjectId projectId)
@@ -514,6 +544,8 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements Admi
 				}
 				role.getProjects().remove(projectId);
 				save();
+				log(sessionId, MessageFormat.format("Removed participant ''{0}'' from project ''{1}'' (ID: {2})", //$NON-NLS-1$
+					orgUnit.getName(), getProjectName(projectId), projectId.getId()));
 				return;
 			}
 		}
@@ -582,6 +614,9 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements Admi
 		if (isServerAdminRole(roleClass)) {
 			orgUnit.getRoles().add(RolesFactory.eINSTANCE.createServerAdmin());
 			save();
+			log(sessionId, MessageFormat.format(
+				"Changed role of OrgUnit ''{0}'' in project ''{1}'' (ID: {2}) to ''{3}''.", orgUnit.getName(), //$NON-NLS-1$
+				getProjectName(resolvedProjectId), resolvedProjectId.getId(), roleClass.getName()));
 			return;
 		}
 
@@ -591,6 +626,9 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements Admi
 			if (r.eClass().getName().equals(roleClass.getName())) {
 				r.getProjects().add(ModelUtil.clone(resolvedProjectId));
 				save();
+				log(sessionId, MessageFormat.format(
+					"Changed role of OrgUnit ''{0}'' in project ''{1}'' (ID: {2}) to ''{3}''.", orgUnit.getName(), //$NON-NLS-1$
+					getProjectName(resolvedProjectId), resolvedProjectId.getId(), roleClass.getName()));
 				return;
 			}
 		}
@@ -600,6 +638,9 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements Admi
 		newRole.getProjects().add(ModelUtil.clone(resolvedProjectId));
 		orgUnit.getRoles().add(newRole);
 		save();
+		log(sessionId, MessageFormat.format(
+			"Changed role of OrgUnit ''{0}'' in project ''{1}'' (ID: {2}) to ''{3}''.", orgUnit.getName(), //$NON-NLS-1$
+			getProjectName(resolvedProjectId), resolvedProjectId.getId(), roleClass.getName()));
 	}
 
 	protected void removeRole(final boolean isServerAdmin, final ProjectId resolvedProjectId,
@@ -654,6 +695,8 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements Admi
 
 		orgUnit.getRoles().add(newRole);
 		save();
+		log(sessionId,
+			MessageFormat.format("Assigned role ''{0}'' to OrgUnit ''{1}''.", roleClass.getName(), orgUnit.getName())); //$NON-NLS-1$
 	}
 
 	/**
@@ -715,6 +758,15 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements Admi
 		return result;
 	}
 
+	private String getProjectName(ProjectId projectId) {
+		for (final ProjectHistory projectHistory : getServerSpace().getProjects()) {
+			if (projectId.equals(projectHistory.getProjectId())) {
+				return projectHistory.getProjectName();
+			}
+		}
+		return "<unknown>"; //$NON-NLS-1$
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -726,7 +778,7 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements Admi
 			ESProjectAdminPrivileges.CreateUser);
 
 		if (userExists(name)) {
-			throw new InvalidInputException("Username '" + name + "' already exists."); //$NON-NLS-1$ //$NON-NLS-2$
+			throw new InvalidInputException("Username ''" + name + "'' already exists."); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		final ACUser acUser = AccesscontrolFactory.eINSTANCE.createACUser();
 		acUser.setName(name);
@@ -737,6 +789,8 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements Admi
 		}
 		getAccessControl().getOrgUnitProviderService().addUser(acUser.toAPI());
 		save();
+		log(sessionId,
+			MessageFormat.format("Created new user with name ''{0}'' and ID ''{1}''", name, acUser.getId().getId())); //$NON-NLS-1$
 		return ModelUtil.clone(acUser.getId());
 	}
 
@@ -810,6 +864,7 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements Admi
 			// TODO: move ecore delete into ServerSpace#deleteUser implementation
 			EcoreUtil.delete(userToDelete);
 			save();
+			log(sessionId, MessageFormat.format("Deleted user ''{0}''", userToDelete.getName())); //$NON-NLS-1$
 		}
 	}
 
@@ -823,9 +878,12 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements Admi
 			sessionId.toAPI(),
 			orgUnitId.toAPI());
 		final ACOrgUnit<?> orgUnit = getOrgUnit(orgUnitId);
+		final String oldName = orgUnit.getName();
 		orgUnit.setName(name);
 		orgUnit.setDescription(description);
 		save();
+		log(sessionId,
+			MessageFormat.format("Renamed OrgUnit ''{0}'' to ''{1}'' and updated its description.", oldName, name)); //$NON-NLS-1$
 	}
 
 	/**
@@ -849,7 +907,7 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements Admi
 		final ACUser requestingUser = resolveUserBySessionId(sessionId.getId());
 
 		if (orgUnit.equals(requestingUser)) {
-			updateUser(userId, name, password);
+			updateUser(sessionId, userId, name, password);
 			return;
 		}
 
@@ -861,15 +919,17 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements Admi
 				userId.toAPI());
 		}
 
-		updateUser(userId, name, password);
+		updateUser(sessionId, userId, name, password);
+
 	}
 
-	private void updateUser(ACOrgUnitId userId, String name, String password) throws ESException {
+	private void updateUser(SessionId sessionId, ACOrgUnitId userId, String name, String password) throws ESException {
 
 		final ACUser user = (ACUser) getOrgUnit(userId);
 		final ESPasswordHashGenerator passwordHashGenerator = AccessControl.getESPasswordHashGenerator();
 
-		if (!checkUserNameChanged(user.getName(), name) && user.getPassword() != null) {
+		final String oldName = user.getName();
+		if (!checkUserNameChanged(oldName, name) && user.getPassword() != null) {
 			/*
 			 * when the user name does not change only the password is updated
 			 * -> check if password is really changed
@@ -887,6 +947,12 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements Admi
 		final ESHashAndSalt hashAndSalt = passwordHashGenerator.hashPassword(password);
 		user.setPassword(hashAndSalt.getHash() + ESHashAndSalt.SEPARATOR + hashAndSalt.getSalt());
 		save();
+		if (checkUserNameChanged(oldName, name)) {
+			log(sessionId,
+				MessageFormat.format("Renamed user ''{0}'' to ''{1}'' and updated their password.", oldName, name)); //$NON-NLS-1$
+		} else {
+			log(sessionId, MessageFormat.format("Updated password of user ''{0}''.", name)); //$NON-NLS-1$
+		}
 	}
 
 	private boolean checkUserNameChanged(String oldName, String newName) {
@@ -1015,7 +1081,7 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements Admi
 	private <T extends ACOrgUnit<?>> List<T> removeInvisibleOrgUnits(List<T> orgUnits, ESSessionId sessionId)
 		throws AccessControlException {
 		/*
-		 * regular users can't see any orgunits, while server admins can see all of them. Only project admins have
+		 * regular users can''t see any orgunits, while server admins can see all of them. Only project admins have
 		 * reduced visibility.
 		 */
 		final ESOrgUnitId adminId = getAccessControl().getSessions().resolveToOrgUnitId(sessionId);
@@ -1080,6 +1146,13 @@ public class AdminEmfStoreImpl extends AbstractEmfstoreInterface implements Admi
 			}
 		}
 		return false;
+	}
+
+	private void log(SessionId sessionId, String message) throws AccessControlException {
+		final ACUser user = resolveUserBySessionId(sessionId.getId());
+		final String logMessage = MessageFormat.format("[Username: {0} | User ID: {1}] {2}", //$NON-NLS-1$
+			user.getName(), user.getIdentifier(), message);
+		Activator.getDefault().logInfo(logMessage);
 	}
 
 	/**

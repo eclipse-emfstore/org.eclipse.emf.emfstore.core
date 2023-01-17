@@ -19,6 +19,7 @@ import org.eclipse.emf.emfstore.common.extensionpoint.ESExtensionElement;
 import org.eclipse.emf.emfstore.common.extensionpoint.ESExtensionPoint;
 import org.eclipse.emf.emfstore.common.extensionpoint.ESExtensionPointException;
 import org.eclipse.emf.emfstore.internal.common.model.util.ModelUtil;
+import org.eclipse.emf.emfstore.internal.server.Activator;
 import org.eclipse.emf.emfstore.internal.server.accesscontrol.authentication.ESUserVerifierFactory;
 import org.eclipse.emf.emfstore.internal.server.core.MonitorProvider;
 import org.eclipse.emf.emfstore.internal.server.exceptions.AccessControlException;
@@ -206,7 +207,7 @@ public class LoginService {
 				clientVersionInfo);
 			if (!information.isPresent()) {
 				/* too many bad attempts, otherwise we get an exception */
-				ModelUtil.logWarning(
+				logWarning(
 					MessageFormat.format(Messages.LoginService_VerifyUserTooManyFailedRequests, username, delay));
 				return false;
 			}
@@ -240,4 +241,7 @@ public class LoginService {
 		}
 	}
 
+	private void logWarning(String message) {
+		Activator.getDefault().logWarning(message);
+	}
 }

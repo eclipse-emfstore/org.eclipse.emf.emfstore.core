@@ -11,6 +11,7 @@
  ******************************************************************************/
 package org.eclipse.emf.emfstore.internal.server.connection.xmlrpc;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +19,7 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.emfstore.internal.common.APIUtil;
 import org.eclipse.emf.emfstore.internal.common.model.EMFStoreProperty;
 import org.eclipse.emf.emfstore.internal.common.model.Project;
+import org.eclipse.emf.emfstore.internal.server.Activator;
 import org.eclipse.emf.emfstore.internal.server.EMFStore;
 import org.eclipse.emf.emfstore.internal.server.accesscontrol.AccessControl;
 import org.eclipse.emf.emfstore.internal.server.connection.xmlrpc.util.ShareProjectAdapter;
@@ -36,6 +38,7 @@ import org.eclipse.emf.emfstore.internal.server.model.SessionId;
 import org.eclipse.emf.emfstore.internal.server.model.accesscontrol.ACOrgUnitId;
 import org.eclipse.emf.emfstore.internal.server.model.accesscontrol.ACUser;
 import org.eclipse.emf.emfstore.internal.server.model.accesscontrol.OrgUnitProperty;
+import org.eclipse.emf.emfstore.internal.server.model.impl.api.ESUserImpl;
 import org.eclipse.emf.emfstore.internal.server.model.versioning.AbstractChangePackage;
 import org.eclipse.emf.emfstore.internal.server.model.versioning.BranchInfo;
 import org.eclipse.emf.emfstore.internal.server.model.versioning.BranchVersionSpec;
@@ -49,6 +52,7 @@ import org.eclipse.emf.emfstore.internal.server.model.versioning.VersionSpec;
 import org.eclipse.emf.emfstore.server.exceptions.ESException;
 import org.eclipse.emf.emfstore.server.model.ESAuthenticationInformation;
 import org.eclipse.emf.emfstore.server.model.ESSessionId;
+import org.eclipse.emf.emfstore.server.model.ESUser;
 
 /**
  * XML RPC connection interface for emfstore.
@@ -80,8 +84,17 @@ public class XmlRpcEmfStoreImpl implements EMFStore {
 	 */
 	public AuthenticationInformation logIn(String username, String password, ClientVersionInfo clientVersionInfo)
 		throws AccessControlException {
-		final ESAuthenticationInformation authInfo = getAccessControl().getLoginService()
-			.logIn(username, password, clientVersionInfo.toAPI());
+		ESAuthenticationInformation authInfo;
+		try {
+			authInfo = getAccessControl().getLoginService()
+				.logIn(username, password, clientVersionInfo.toAPI());
+			log(MessageFormat.format("[Client: {0}-{1}] Login of user ''{2}'' succeeded.", clientVersionInfo.getName(), //$NON-NLS-1$
+				clientVersionInfo.getVersion(), username));
+		} catch (final AccessControlException ex) {
+			log(MessageFormat.format("[Client: {0}-{1}] Login of user ''{2}'' failed.", clientVersionInfo.getName(), //$NON-NLS-1$
+				clientVersionInfo.getVersion(), username), ex);
+			throw ex;
+		}
 		return org.eclipse.emf.emfstore.internal.server.model.impl.api.ESAuthenticationInformationImpl.class
 			.cast(authInfo).toInternalAPI();
 	}
@@ -96,7 +109,14 @@ public class XmlRpcEmfStoreImpl implements EMFStore {
 	 *             in case logout fails
 	 */
 	public void logout(SessionId sessionId) throws AccessControlException {
-		getAccessControl().getLoginService().logout(sessionId.toAPI());
+		try {
+			final ACUser user = resolveUserBySessionId(sessionId.getId());
+			getAccessControl().getLoginService().logout(sessionId.toAPI());
+			log(user, "Logout succeeded.", null); //$NON-NLS-1$
+		} catch (final AccessControlException ex) {
+			log(MessageFormat.format("[Session ID: {0}] Logout failed.", sessionId.getId()), ex); //$NON-NLS-1$
+			throw ex;
+		}
 	}
 
 	/**
@@ -323,7 +343,7 @@ public class XmlRpcEmfStoreImpl implements EMFStore {
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @see org.eclipse.emf.emfstore.internal.server.EMFStore#deleteFile(org.eclipse.emf.emfstore.internal.server.model.SessionId,
 	 *      org.eclipse.emf.emfstore.internal.server.model.ProjectId,
 	 *      org.eclipse.emf.emfstore.internal.server.model.FileIdentifier)
@@ -332,4 +352,32 @@ public class XmlRpcEmfStoreImpl implements EMFStore {
 		getEmfStore().deleteFile(sessionId, projectId, fileIdentifier);
 	}
 
+	private void log(String message) {
+		Activator.getDefault().logInfo(message);
+	}
+
+	private void log(String message, Throwable exception) {
+		Activator.getDefault().logInfo(message, exception);
+	}
+
+	private void log(SessionId sessionId, String message) throws AccessControlException {
+		log(sessionId, message, null);
+	}
+
+	private void log(SessionId sessionId, String message, Throwable exception) throws AccessControlException {
+		final ACUser user = resolveUserBySessionId(sessionId.getId());
+		log(user, message, exception);
+	}
+
+	private void log(ACUser user, String message, Throwable exception) {
+		final String logMessage = MessageFormat.format("[Username: {0} | User ID: {1}] {2}", //$NON-NLS-1$
+			user.getName(), user.getIdentifier(), message);
+		Activator.getDefault().logInfo(logMessage, exception);
+	}
+
+	private ACUser resolveUserBySessionId(String sessionId) throws AccessControlException {
+		final ESSessionId resolvedSession = getAccessControl().getSessions().resolveSessionById(sessionId);
+		final ESUser resolvedUser = getAccessControl().getSessions().resolveUser(resolvedSession);
+		return (ACUser) ESUserImpl.class.cast(resolvedUser).toInternalAPI();
+	}
 }
