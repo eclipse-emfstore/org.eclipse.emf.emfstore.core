@@ -35,6 +35,7 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.emfstore.common.ESResourceSetProvider;
@@ -249,9 +250,16 @@ public class EMFStoreController implements IApplication, Runnable {
 					project.getBranches().add(branchInfo);
 					new ResourceHelper(serverSpace).save(project);
 				} else {
-					final String errorMessage = MessageFormat.format(
-						"[EMFStoreController] Could not initiliaze branch because the project has no versions. Project: {0} (ID: {1})", //$NON-NLS-1$
-						project.getProjectName(), project.getProjectId());
+					String errorMessage;
+					if (project.eIsProxy()) {
+						errorMessage = MessageFormat.format(
+							"[EMFStoreController] Could not initiliaze branch because the project is a ProjectHistory-Proxy with ProxyURI: {0}", //$NON-NLS-1$
+							InternalEObject.class.cast(project).eProxyURI());
+					} else {
+						errorMessage = MessageFormat.format(
+							"[EMFStoreController] Could not initiliaze branch because the project has no versions. Project: {0} (ID: {1})", //$NON-NLS-1$
+							project.getProjectName(), project.getProjectId());
+					}
 					ModelUtil.logError(errorMessage);
 					if (exitOnFail) {
 						throw new FatalESException(errorMessage);
