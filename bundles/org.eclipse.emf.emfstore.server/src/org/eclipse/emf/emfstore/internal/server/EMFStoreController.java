@@ -142,6 +142,8 @@ public class EMFStoreController implements IApplication, Runnable {
 			throw new FatalESException(Messages.EMFStoreController_EMFStore_Controller_Already_Running);
 		}
 
+		ModelUtil.logInfo("[EMFStoreController] Running..."); //$NON-NLS-1$
+
 		instance = this;
 
 		serverHeader();
@@ -222,17 +224,39 @@ public class EMFStoreController implements IApplication, Runnable {
 	}
 
 	private void initializeBranchesIfRequired(ServerSpace serverSpace) throws FatalESException {
-		for (final ProjectHistory project : serverSpace.getProjects()) {
-			if (project.getBranches().size() == 0) {
-				// create branch information
-				final BranchInfo branchInfo = VersioningFactory.eINSTANCE.createBranchInfo();
-				branchInfo.setName(VersionSpec.BRANCH_DEFAULT_NAME);
+		ModelUtil.logInfo("[EMFStoreController] Initialize required branches."); //$NON-NLS-1$
 
-				branchInfo.setHead(ModelUtil.clone(project.getLastVersion().getPrimarySpec()));
-				// set branch source to 0 since no branches can have existed
-				branchInfo.setSource(ModelUtil.clone(Versions.createPRIMARY(VersionSpec.BRANCH_DEFAULT_NAME, 0)));
-				project.getBranches().add(branchInfo);
-				new ResourceHelper(serverSpace).save(project);
+		final String exitOnFailProperty = ServerConfiguration.getProperties().getProperty(
+			ServerConfiguration.STARTUP_EXIT_ON_BRANCH_INIT_ERROR,
+			ServerConfiguration.STARTUP_EXIT_ON_BRANCH_INIT_ERROR_DEFAULT);
+		final boolean exitOnFail = Boolean.TRUE.toString().equals(exitOnFailProperty);
+
+		for (final ProjectHistory project : serverSpace.getProjects()) {
+
+			if (project.getBranches().size() == 0) {
+				ModelUtil
+					.logInfo(MessageFormat.format("[EMFStoreController] Initialize branch for project {0} (ID: {1})", //$NON-NLS-1$
+						project.getProjectName(), project.getProjectId()));
+
+				if (project.getLastVersion() != null) {
+					// create branch information
+					final BranchInfo branchInfo = VersioningFactory.eINSTANCE.createBranchInfo();
+					branchInfo.setName(VersionSpec.BRANCH_DEFAULT_NAME);
+
+					branchInfo.setHead(ModelUtil.clone(project.getLastVersion().getPrimarySpec()));
+					// set branch source to 0 since no branches can have existed
+					branchInfo.setSource(ModelUtil.clone(Versions.createPRIMARY(VersionSpec.BRANCH_DEFAULT_NAME, 0)));
+					project.getBranches().add(branchInfo);
+					new ResourceHelper(serverSpace).save(project);
+				} else {
+					final String errorMessage = MessageFormat.format(
+						"[EMFStoreController] Could not initiliaze branch because the project has no versions. Project: {0} (ID: {1})", //$NON-NLS-1$
+						project.getProjectName(), project.getProjectId());
+					ModelUtil.logError(errorMessage);
+					if (exitOnFail) {
+						throw new FatalESException(errorMessage);
+					}
+				}
 			}
 		}
 	}
@@ -642,6 +666,7 @@ public class EMFStoreController implements IApplication, Runnable {
 				System.out.println(line);
 			}
 		} catch (final IOException e) {
+			ModelUtil.logWarning("[EMFStoreController] Exception while reading server headers", e); //$NON-NLS-1$
 			// ignore
 		} finally {
 			try {

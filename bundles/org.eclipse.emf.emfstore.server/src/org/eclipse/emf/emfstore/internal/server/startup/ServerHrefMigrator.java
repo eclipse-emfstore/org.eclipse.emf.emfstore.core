@@ -169,6 +169,7 @@ public class ServerHrefMigrator {
 	}
 
 	private List<String> doMigrate(String serverHome) throws InvocationTargetException {
+		ModelUtil.logInfo("[ServerHrefMigrator] Execute migration for server home: " + serverHome); //$NON-NLS-1$
 		migrateNonContainment(serverHome + STORAGE_USS, "projects", new ServerSpaceRule()); //$NON-NLS-1$
 
 		final File serverHomeFile = new File(serverHome);

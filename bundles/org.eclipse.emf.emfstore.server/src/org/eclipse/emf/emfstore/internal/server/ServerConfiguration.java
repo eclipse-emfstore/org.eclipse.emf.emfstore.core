@@ -275,6 +275,16 @@ public final class ServerConfiguration {
 	public static final String LOAD_STARTUP_LISTENER_DEFAULT = Boolean.TRUE.toString();
 
 	/**
+	 * Whether the server should exit if there is an error while initializing missing project branches.
+	 */
+	public static final String STARTUP_EXIT_ON_BRANCH_INIT_ERROR = "emfstore.startup.branch.init.exit.on.fail"; //$NON-NLS-1$
+
+	/**
+	 * Default values for {@link #STARTUP_EXIT_ON_BRANCH_INIT_ERROR}.
+	 */
+	public static final String STARTUP_EXIT_ON_BRANCH_INIT_ERROR_DEFAULT = Boolean.TRUE.toString();
+
+	/**
 	 * Property name of accepted client versions. Enter the version's names or
 	 * any, seperate multiple entries with {@link #MULTI_PROPERTY_SEPERATOR}.
 	 */
